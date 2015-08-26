@@ -1,0 +1,254 @@
+/*
+ Localizable.strings
+ ProBand
+ 
+ Created by star.zxc on 15/7/6.
+ Copyright (c) 2015年 fenda. All rights reserved.
+ */
+
+//通用
+"I_have_known" = "我知道了";
+"hour" = "小时";
+"minute" = "分钟";
+"steps" = "步数";
+"distance" = "里程";
+"calories" = "卡路里";
+"day" = "日";
+"week" = "周";
+"month" = "月";
+"confirm" = "确定";
+"cancel" = "取消";
+"man" = "男";
+"woman" = "女";
+
+//smsPwd
+"Password_reset_failed" = "重置密码失败";
+"abandon_code" = "废弃验证码";
+"password_reset_successfully" = "恭喜你密码重置成功!";
+"The_new_password_cannot_be_empty"= "新密码不能为空 ";
+"code_cannot_be_empty" = "短信验证码不能为空 ";
+"Please_enter_a_new_password" = "请输入8-20位的新密码";
+"characters" = "8-20个字符";
+"Message_authentication_code" ="短信验证码";
+"Input_message_authentication_code" = "请输入短信验证码";
+"sport_time" = "运动耗时";
+
+"have_lenovo_account" = "拥有联想账号";
+"user_can" = "你可以同步备份联系人、短信、与朋友分享照片，登陆游戏";
+"user_login" = "用户登录";
+"third_party_login" = "合作账号登陆";
+"lenovo_account" = "联想账号";
+
+"sina_weibo" = "新浪微博";
+"qq_account" = "QQ账号";
+"login_timeout" = "登录超时，请重试 ";
+
+"usename_not_nil" = "用户名或密码不能为空!";
+"no_network" = "网络没连接 ";
+
+"find_psd" = "找回密码";
+"input_account_for_psd" = "请输入你要找回密码的账号 ";
+"phonenumber_or_mail" = "手机号码/邮箱";
+"auth_code" = "验证码";
+"image_auth_code" = "图形验证码";
+"get_SMS_auth_code" = "获取短信验证码";
+"input_account" = "请输入用户账号 ";
+"input_available" = "请输入有效的用户账号 ";
+"input_right_authcode" = "请输入正确的验证码 ";
+"authcode_error" = "验证码错误，请重新填写 ";
+"get_authcode_failed" = "获取重置密码的验证码失败,请检查您的账号！";
+"get_authcode_success" = "获取验证码信息成功";
+"note_to_mail" = "重置密码信息将发送至您的邮箱，请注意查收.";
+"note_to_phone" = "校验码将以短信方式发送至您的手机，请注意查收";
+
+"account_be_phonenumber_mail" = "用户名必须是电话号码或者邮箱 ";
+"psd_limit" = "密码必须是4－20位字符，包括英文字母、数字、减号和下划线 ";
+"psd_different" = "两次密码不相同";
+"authcode_five" = "验证码必须是5位数字";
+"set_psd" = "请设置8-20位密码";
+"8_20_cheracter" = "8-20个字符";
+
+"finish_login" = "完成并登录";
+"agree_article" = "注册表示您已经阅读并同意联想账号服务条款";
+"psd_not_nil" = "密码不能为空";
+"psd_error" = "密码错误 ";
+"unknown_error" = "未知错误 ";
+"username_authcode_not_nil"= "用户名或验证码不能为空 ";
+//----------------------------------登录----------------------------------
+"login" = "登录";
+"register" = "注册";
+"lenovo_id" = "联想ID";
+"password" = "密码";
+"3th_account_login" = "请用第三方账号登录";
+"qq_login" = "QQ登录";
+"wechat_login" = "微信登录";
+"direct_use" = "不想登录?直接使用>";
+"input_username_psd" = "请输入用户名和密码";
+"wrong_account" = "账号有误!";
+"wrong_psd_msg" = "密码错误,请重新输入密码！";
+"login_failed_msg" = "登录失败，请重试";
+//----------------------------------蓝牙相关页面----------------------------------
+"searching_band" = "正在搜索手环...";
+"connection_failed" = "连接失败";
+"BT_is_not_open" = "蓝牙未打开!";
+"not_support_BT" = "您的设备不支持蓝牙或蓝牙4.0";
+"turn_on_BT_connect_to_phone" = "打开蓝牙来允许\n\"ProBand\"连接到配件";
+"i_know" = "知道了";
+"select_band" = "选择搜索到的手环";
+"show_band_id_then_select" = "您的手环ID将显示在手环上请对应选择";
+"ensure_band_id_on_band" = "请在手环上确认手环ID名称";
+"connection_failed" = "手环连接失败";
+"turn_on_near_phone_full_power" = "将手环开机并靠近手机同时确保手环电量充足";
+"search_again" = "重新搜索";
+"bind_now" = "立即绑定";
+"no_band_be_searched" = "未搜索到手环";
+//----------------------------------主页面----------------------------------
+"Lenovo_free_pay"= "联想自由付";
+"daily"= "日常";
+"account_balance"= "账户余额";
+"day_consumption"= "当日消费";
+"degree_of_completion"= "完成度";
+"day_mileage_day" = "当天里程/千米";
+//支付
+"pay" = "支付";
+"electronic_cash_amount" = "电子现金金额";
+"my_bank_card" = "我的银行卡";
+"band_transactions" = "手环交易记录";
+"bank_card_set" = "银行卡设置";
+//睡眠
+"sleep" = "睡眠";
+"sleep_time" = "睡眠时间";
+"sleep_duration" = "睡眠时长";
+"good" = "优";
+"deep_sleep" = "深睡";
+"light_sleep" = "浅睡";
+"awake" = "清醒";
+//锻炼
+"exercise" = "锻炼";
+"exercise_time" = "锻炼时间";
+"sport_completed" = "运动完成度";
+"run" = "跑步";
+"walk" = "走路";
+"static" = "静止";
+"average_speed_hour" = "平均速度/小时";
+
+//----------------------------------二级页面----------------------------------
+//<日常>
+"sport_volume" = "运动量";
+"today_mileage_day" = "当天里程/千米";
+"day_steps_day" = "当天步数/步";
+"day_consumption_kcal" = "当天消耗/千卡";
+"sport_time" = "运动时间";
+"static_time" = "静止时间";
+//增加by Star
+"day_average_mile" = "日均里程/千米";
+"day_average_step" = "日均步数/步";
+"day_average_calory" = "日均消耗/千卡";
+"day_average_sport_time" = "日均运动时间";
+"day_average_static_time" = "日均静止时间";
+"day_average_walk_mile" = "日均行走里程/千米";
+"day_average_walk_time" = "日均行走时长/分钟";
+"day_average_walk_calory" = "日均行走消耗/千卡";
+//<睡眠>
+"sleep_details" = "睡眠详情";
+//"sleep_duration" = "睡眠时长";
+"deep_sleep_time" = "深睡时长";
+"light_sleep_time" = "浅睡时长";
+"sleep_start_time" = "入睡时间";
+"wake_up_time" = "醒来时间";
+"awake_duration" = "清醒时长";
+"average_sleep_time" = "平均睡眠时长";
+"average_deep_sleep_time" = "平均深睡时长";
+"average_light_sleep_time" = "平均浅睡时长";
+"average_sleep_start_time" = "平均入睡时间";
+"average_sleep_end_time" = "平均醒来时间";
+"average_sleep_awake_time" = "平均清醒时长";
+//<锻炼>
+"exercising_volume" = "训练量";
+//日程
+"schedule"="提醒";
+"schedule_delete"="删除";
+//----------------------------------设置页面----------------------------------
+"setting" = "设置";
+"my_band" = "我的手环";
+"personal_information" = "个人信息";
+"band_reminder" = "手环提醒";
+"sport_target" = "运动目标";
+"join_improvement_program" = "参与改善计划";
+"join_improvement_program_detail" = "只会将您的数据用于分析，用来帮助做用户体验的提升。";
+"about" = "关于";
+//<我的手环>
+"current_power" = "当前电量";
+"used_days" = "已使用天";
+"band_id" = "手环ID";
+"unbund_band" = "解绑手环";
+"band_status" = "状态";
+"check_band_firmware" = "检测手环FW";
+"last_sync_time" = "上次同步时间";
+"band_mac" = "手环mac地址";
+"band_BLE" = "手环BLE";
+"band_connected" = "已连接";
+"band_disconnect"= "未连接";
+"result_after_unbinding" = "解除绑定后,手机将无法获取手环内的信息";
+"what_you_can_do_after_unbinding" = "解除绑定后,可以使用其它手机连接手环,或更换新手环";
+"unbund" = "解绑";
+//<<手环更新>>
+"band_update" = "手环更新";
+"checking_for_updates" = "正在检查更新";
+"new_version_software_can_be_updated" = "有新版本手环软件可更新";
+"update" = "更新";
+"updating" = "正在更新...";
+"updated_message" = "联想自由付 1.1 \n 您的手环软件是最新版本.";
+"already_latest_version" = "您的手环软件是最新版本";
+//<<个人信息>>
+"icon" = "头像";
+"nickname" = "昵称";
+"gender" = "性别";
+"age" = "年龄";
+"height" = "身高";
+"weight" = "体重";
+"logout" = "退出登录";
+"logout_message" = "退出会中断手机与手环的连接，确认继续？";
+//<<手环提醒>>
+"band_reminds" = "手环提醒";
+"remind_set" = "提醒设置";
+"close_remind_message" = "关闭后，手环端将不再会出现相应提醒";
+"alarm_reminder" = "闹钟提醒";
+"calls_reminder" = "来电提醒";
+"sms_reminder" = "短信提醒";
+"calendar_reminder" = "日程提醒";
+"E-mail_reminder" = "邮件提醒";
+"QQ_reminder" = "QQ提醒";
+"WeChat_reminder" = "微信提醒";
+"Facebook_reminder" = "Facebook提醒";
+"Twitter_reminder" = "推特提醒";
+"Whatsapp_reminder" = "Whatsapp提醒";
+"connect_band_then_modify_remind_setting" = "请先连接手环,再修改提醒设置";
+//<<闹钟提醒>>
+"alarm" = "闹钟";
+"delete_alarm" = "删除闹钟提示:";
+"add_alarm" = "添加闹钟";
+"edit_alarm" = "编辑闹钟";
+"remind_tips" = "提醒信息";
+"input_simple_tips" = "点击输入简单提示";
+"smart_reminder" = "智能提醒";
+"repeat" = "重复";
+"wake_up_interval" = "间隔唤醒";
+"select_all" = "全选";
+//<<运动目标>>
+"sport" = "运动";
+"WHO_suggest_about_sport" = "根据世界卫生组织的建议,结合你的个人信息,\n我们为你推荐中等强度运动40分钟,相当于快走8000步.";
+"steps_step" = "步数/步";
+"calorie_kcal" = "卡路里/千卡";
+"a_hamburger" = "一个汉堡";
+"time_min" = "时间/分钟";
+"distance_km" = "距离/公里";
+//<<睡眠目标>>
+"sleep_target" = "睡眠目标";
+"WHO_suggest_about_sleep" = "根据世界卫生组织的建议，结合你的个人信息,\n成年人睡眠质量为7-8小时(不宜少于6小时).";
+"office_worker" = "上班族";
+"night_owl" = "熬夜党";
+"students" = "学生派";
+//<<锻炼目标>>
+"exercise_target" = "锻炼目标";
+"exercise_distance" = "训练距离";

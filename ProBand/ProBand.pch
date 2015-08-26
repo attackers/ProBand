@@ -1,0 +1,173 @@
+//
+//  ProBand.pch
+//  ProBand
+//
+//  Created by zhuzhuxian on 15/5/4.
+//  Copyright (c) 2015年 fenda. All rights reserved.
+//
+
+#ifndef ProBand_ProBand_pch
+#define ProBand_ProBand_pch
+#import <UIKit/UIKit.h>
+#import "PublicFunction.h"
+#import "HTTPManage.h"
+#import "DefaultValueManage.h"
+#import "Singleton.h"
+#import "TKAlertCenter.h"
+#import "Loading.h"
+#import "DateHandle.h"
+#import "DBOperator.h"
+#import "AlgorithmHelper.h"
+#import "LenovoShareSdk.h"
+#import "BaseViewController.h"
+#import "MJRefresh.h"
+#import "FMDBTool.h"
+#import "AssisitTool.h"
+
+#import "NetWorkManage.h"
+#import "Contants.h"
+#import "AFNetworking.h"
+#import "XlabTools.h"
+
+#import "BaseModel.h"
+#import "UserTargetModel.h"
+#import "UserInfoModel.h"
+#import "HomePageModel.h"
+#import "StepDataModel.h"
+#import "SleepDataModel.h"
+#import "StepdownModel.h"
+#import "SleepdownModel.h"
+#import "ClockUnit.h"
+
+#import "AppDelegate.h"
+#import "CustomAlertview.h"
+#import "DefaultString.h"
+
+
+#define  navBarHeight 50
+//#define weburl @"http://192.168.2.231/"
+#define weburl @"http://116.7.249.146:8168/"
+//设置的宏:是否参与改善计划，默认为yes
+#define HasParticipateInImproving @"hasParticipateInImproving"
+//主页面的宏：存两个字典
+#define statisticsSleepData @"statisticsSleepData" //用于存储userinfo中睡眠统计数据
+#define  statisticsStepData @"statisticsStepData" //用于存储userinfo中计步统计数据
+#define statisticsexerciseData @"statisticeExerciseData" //用于存储userinfo训练统计数据
+#define touchBeginSyncDate @"touchBeginSyncDate"//存储每次更新时间
+//第三方登录
+#define QQ_ACCOUNT @"QQLocalAcount"//qq本地账号绑定
+#define SINAWEIBO_ACCOUNT @"sinaweiboAccount"//新浪微博本地账号绑定
+
+#define IsFirstIntoApp @"isFirstEnterApp"
+#define LOCAL_ACCOUNT @"localAccount"//本地账户持久化
+#define HASINTOHOMEVIEW  @"hasIntoHomeView" //已经进入到主页
+#define HAS_INSERT_DATA @"hasInsertTestData"//已插入测试数据，app存在期间
+
+#define SIMPLECHINESE           @"simpleChinese"//是简体中文
+
+#define CURRENT_USERID @"currentUserId"//当前用户id
+#define CURRENT_MACSITE  @"currentMacSite"//当前的手环mac地址
+//正则表达式
+#define VALIDATE_EMAIL_REGEX @"\\b([a-zA-Z0-9%_.+\\-]+)@([a-zA-Z0-9.\\-]+?\\.[a-zA-Z0-9]{1,6})\\b"
+#define VALIDATE_PHONE_REGEX @"^(13|14|15|18)\\d{9}$"
+#define VALIDATE_CAPCHANUM_REGEX @"\\d{5}"
+#define VALIDATE_PASSWORD_REGEX @"^[0-9a-zA-Z_]{4,20}$"
+
+// Include any system framework and library headers here that should be included in all compilation units.
+// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+#define SCREEN_WIDTH ([UIScreen mainScreen].bounds.size.width)
+#define SCREEN_HEIGHT ([UIScreen mainScreen].bounds.size.height)
+#define screenWidth ([UIScreen mainScreen].bounds.size.width)
+#define screenHeight ([UIScreen mainScreen].bounds.size.height)
+//NavBar高度
+#define NavigationBar_HEIGHT 60
+
+#define iPhone4 ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(640, 960), [[UIScreen mainScreen] currentMode].size) : NO)
+#define iPhone5 ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(640, 1136), [[UIScreen mainScreen] currentMode].size) : NO)
+#define iPhone6 ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? (CGSizeEqualToSize(CGSizeMake(750, 1334), [[UIScreen mainScreen] currentMode].size)) : NO)
+#define iPhone6plus ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(1242, 2208), [[UIScreen mainScreen] currentMode].size) : NO)
+
+#define iOS8 [[[UIDevice currentDevice] systemVersion] floatValue] > 8.0
+#define iOS7 [[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0
+#define systemIsIOS7 [[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0 && [[[UIDevice currentDevice] systemVersion] floatValue] < 8.0
+
+#define bgBlue            [UIColor colorWithRed:24/255.0 green:101/255.0 blue:202/255.0 alpha:1]
+#define bgRed              [UIColor colorWithRed:228/255.0 green:78/255.0 blue:67/255.0 alpha:1.0]
+#define fontGray          [UIColor colorWithRed:99/255.0 green:99/255.0 blue:99/255.0 alpha:1.0]
+#define borderLineColor   [UIColor colorWithRed:172/255.0 green:172/255.0 blue:172/255.0 alpha:1]
+#define buttonselectColor [UIColor colorWithRed:234/255.0 green:234/255.0 blue:234/255.0 alpha:1]
+#define BYGray [UIColor colorWithRed:55/255.0 green:55/255.0 blue:55/255.0 alpha:1]
+
+
+#define deepSleepColor [UIColor colorWithRed:52/255.0 green:124/255.0 blue:178/255.0 alpha:1]
+
+#define lightSleepColor [UIColor colorWithRed:12/255.0 green:78/255.0 blue:140/255.0 alpha:1]
+
+#define weakSleepColor [UIColor colorWithRed:138/255.0 green:200/255.0 blue:238/255.0 alpha:1]
+#define Gray [UIColor colorWithRed:241/255.0 green:241/255.0 blue:241/255.0 alpha:1]
+#define byBule [UIColor colorWithRed:24/255.0 green:121/255.0 blue:202/255.0 alpha:1]
+
+#define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
+#define navigationColor  UIColorFromRGB(0x001e38)
+#define splitLineColor UIColorFromRGB(0x46A3FF)
+#define ColorRGB(R,G,B) [UIColor colorWithRed:R/255.0 green:G/255.0 blue:B/255.0 alpha:1]
+
+#define ELightWhite [UIColor colorWithWhite:1.0 alpha:0.8]
+#define EDeepSleepColor   [UIColor colorWithRed:0/255.0 green:139.0/255.0 blue:255.0/255.0 alpha:1.0]//深度睡眠
+#define ELightSleepColor [UIColor colorWithRed:36.0/255.0 green:155.0/255.0 blue:255.0/255.0 alpha:1.0]//浅睡眠
+#define EWeakColor   [UIColor colorWithRed:106.0/255.0 green:187.0/255.0 blue:255.0/255.0 alpha:1.0]//清醒
+#define EBlueGreenColor1  [UIColor colorWithRed:0/255.0 green:139.0/255.0 blue:255.0/255.0 alpha:0.5] //小三角颜色
+#define defaultEFoatBoxTag 50000
+
+#define EStepColor   [UIColor colorWithRed:239/255.0 green:149/255.0 blue:140/255.0 alpha:1.0]//记步
+#define EStepSelectColor [UIColor colorWithRed:242/255.0 green:182/255.0 blue:178/255.0 alpha:1.0]//记步选中
+#define Chart_View_Width (SCREEN_WIDTH-60) //自定义chartView的宽度，不建议后期修改
+#define COLOR(R,G,B) [UIColor colorWithRed:R/255.0 green:G/255.0 blue:B/255.0 alpha:1]
+
+#define CGCOLOR(R,G,B) COLOR(R,G,B).CGColor
+//本地化语言的宏
+#define LocalString(R)  NSLocalizedString(R, nil)
+
+#define scheduleDefaults [[NSUserDefaults standardUserDefaults]objectForKey:@"scheduleDefaults"]
+#define saveScheduleDefaults(id)   [[NSUserDefaults standardUserDefaults]setObject:id forKey:@"scheduleDefaults"]
+//数据库表名的宏：目前总共18个表
+#define UserInfoTable @"t_userInfo"//个人信息
+#define SettingInfoTable @"t_settingInfo"//设置数据
+
+#define StepDataTable @"t_stepData"//计步数据
+#define ExerciseDataTable @"t_exerciseData"//训练数据
+#define SleepDataTable @"t_sleepData"//睡眠数据
+#define StepTotalTable @"t_total_stepData"//计步数据汇总
+#define ExerciseTotalTable @"t_total_exerciseData"//训练数据汇总
+#define SleepTotalTable @"t_total_sleepData"//睡眠数据汇总
+
+#define StepGoalTable @"t_goal_step"//计步目标
+#define ExerciseGoalTable @"t_goal_exercise"//训练目标
+#define SleepGoalTable @"t_goal_sleep"//睡眠目标
+
+#define AlarmTable @"t_alarm"//闹钟
+#define PayRecordTable @"t_payRecord"//支付记录
+#define WeatherTable @"t_weather" //天气
+#define Calender @"t_calendar"//日历
+#define DeviceTable @"t_deviceInfo"//设备信息
+#define UseTimeTable @"t_useTimes"//各个功能使用次数
+#define FeedbackTable @"t_userFeedback"//用户反馈内容
+
+//添加by Star
+//字体的宏
+#define APP_FONT_BASE @"Helvetica Neue LT Pro"
+#define APP_FONT_THIN @"Helvetica Neue LT Std"
+#define HelveticaNeueCE_Roman_0 @"HelveticaNeueCE-Roman"
+#define HelveticaNeueLTStd_UltLt_3 @"HelveticaNeue-UltraLight"
+#define HelveticaNeueLTPro_Lt_3 @"HelveticaNeue-Light"
+#define HelveticaNeueLTPro_Th_C @"HelveticaNeue-Thin"
+#define MicrosoftYaHe @"Roboto-Regular"
+#endif
+
+#ifdef DEBUG
+#define NSLog(FORMAT, ...) fprintf(__stderrp,"%s %s:%d\t%s\t%s\n",__TIME__,[[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String], __LINE__, __FUNCTION__, [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
+#else
+#define NSLog(...)
+
+
+#endif

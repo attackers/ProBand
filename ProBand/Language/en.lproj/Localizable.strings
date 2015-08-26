@@ -1,0 +1,256 @@
+/*
+ Localizable.strings
+ ProBand
+ 
+ Created by star.zxc on 15/7/6.
+ Copyright (c) 2015年 fenda. All rights reserved.
+ */
+
+"I_have_known" = "I see";
+
+"Password_reset_failed" = "Password reset failed";
+"abandon_code" = "abandon code";
+"password_reset_successfully" = "password reset successfully";
+"The_new_password_cannot_be_empty" = "The new password cannot be empty ";
+"code_cannot_be_empty" = "code cannot be empty ";
+"characters" = "8 to 20 characters";
+"Please_enter_a_new_password" = "Please enter a new password 8 to 20";
+"Input_message_authentication_code" = "Input message authentication code";
+"Message_authentication_code" = "Message authentication code";
+
+
+"have_lenovo_account" = "Having lenovo account";
+"user_can" = "You can synchronism and backup your contacts and notes";
+"user_login" = "User login";
+"third_party_login" = "Third party login";
+"lenovo_account" = "Lenovo account";
+"register" = "Register";
+"sina_weibo" = "SinaWeibo";
+"qq_account" = "QQ";
+"login_timeout" = "Login timeout,try again. ";
+
+"usename_not_nil" = "User name or password could not be nil.";
+"no_network" = "No network connection ";
+
+"find_psd" = "Find password";
+"input_account_for_psd" = "Please input the account ";
+"phonenumber_or_mail" = "Phonenumber/mail";
+"auth_code" = "Auth code";
+"image_auth_code" = "Image auth code";
+"get_SMS_auth_code" = "Get SMS auth code";
+"input_account" = "Please input your account ";
+"input_available" = "Please input avalible account ";
+"input_right_authcode" = "Please input right auth code ";
+"authcode_error" = "The auth code is wrong,please input again ";
+"get_authcode_failed" = "Getting auth code failed,please check out your account! ";
+"get_authcode_success" = "Get auth code success";
+"note_to_mail" = "The note will be sended to your mail,please pay attention.";
+"note_to_phone" = "The auth code will be sended to your phone,please pay attention.";
+
+"account_be_phonenumber_mail" = "The account must be phone number or mail ";
+"psd_limit" = "The length of password must be above 4 and less than 20 ";
+"psd_different" = "The old and new password are differernt";
+"authcode_five" = "The authcode must be five number";
+"set_psd" = "Please set 8-20 password";
+"8_20_cheracter" = "8-20 cheracters";
+
+"finish_login" = "Finish and login";
+"agree_article" = "Register shows that you have agree the article of Lenovo Account Service";
+"psd_not_nil" = "The password couldn't be nil";
+"psd_error" = "The password is wrong ";
+"unknown_error" = "Unknown error ";
+"username_authcode_not_nil"= "The username or authcode couldn't be nil ";
+//---------通用------------
+"hour" = "Hour";
+"minute" = "Minute";
+"steps" = "Steps";
+"distance" = "Distance";
+"calories" = "Calories";
+"day" = "Day";
+"week" = "Week";
+"month" = "Month";
+"confirm" = "Confirm";
+"cancel" = "Cancel";
+"man" = "Man";
+"woman" = "Woman";
+//----------------------------------登录----------------------------------
+"login" = "Log in";
+"register" = "Register";
+"lenovo_id" = "Lenovo ID";
+"password" = "Password";
+"3th_account_login" = "Use a third-party account login";
+"qq_login" = "QQ";
+"wechat_login" = "WeChat";
+"direct_use" = "Direct use>";
+"input_username_psd" = "Pls enter your username and psd";
+"wrong_account" = "Wrong account!";
+"wrong_psd_msg" = "Wrong password, please re-enter your password!";
+"login_failed_msg" = "Login failed, please try again";
+//----------------------------------蓝牙相关页面----------------------------------
+"searching_band" = "Searching band...";
+"connection_failed" = "Connection failed";
+"BT_is_not_open" = "BT is not open!";
+"not_support_BT" = "Your device does not support Bluetooth or Bluetooth 4.0";
+"turn_on_BT_connect_to_phone" = "Turn on Bluetooth to allow \n \"ProBand\" to connect to accessories";
+"i_know" = "I know";
+"select_band" = "Select band";
+"show_band_id_then_select" = "Your bracelet ID will be displayed in the hand ring, please choose";
+"ensure_band_id_on_band" = "Please confirm the bracelet in hand ring ID name";
+"connection_failed" = "Band connection failed";
+"turn_on_near_phone_full_power" = "Turned on the band and near the phone at the same time ensure adequate power";
+"search_again" = "Search again";
+"bind_now" = "Bind now";
+"no_band_be_searched" = "There's no band has been searched";
+//----------------------------------主页面----------------------------------
+"Lenovo_free_pay"= "Lenovo free pay";
+"daily"= "Daily";
+"account_balance"= "Balance";
+"day_consumption"= "Consumption";
+"degree_of_completion"= "Completed";
+"today_mileage_day" = "Miles/Km";
+//支付
+"pay" = "Pay";
+"electronic_cash_amount" = "Electronic cash amount";
+"my_bank_card" = "My bank card";
+"band_transactions" = "Band transactions";
+"bank_card_set" = "Bank card set";
+//睡眠
+"sleep" = "Sleep";
+"sleep_time" = "Sleep time";
+"sleep_duration" = "Sleep duration";
+"good" = "Excellent";
+"deep_sleep" = "Deep sleep";
+"light_sleep" = "Light sleep";
+"awake" = "Awake";
+//锻炼
+"exercise" = "Exercise";
+"exercise_time" = "Exercise time";
+"sport_completed" = "Sport completed";
+"run" = "Run";
+"walk" = "Walk";
+"static" = "Static";
+"average_speed_hour" = "Average speed/H";
+
+//----------------------------------二级页面----------------------------------
+//<日常>
+"sport_volume" = "Sport volume";
+"day_mileage_day" = "Day mileage/Km";
+"day_steps_day" = "Day steps/Step";
+"day_consumption_kcal" = "Day Consumption/Kcal";
+"sport_time" = "Sport time";
+"static_time" = "Static time";
+//增加by Star
+"day_average_mile" = "Day average miles";
+"day_average_step" = "Day average steps";
+"day_average_calory" = "Day average calories";
+"day_average_sport_time" = "Day average sport time";
+"day_average_static_time" = "Day average static time";
+"day_average_walk_mile" = "Day average walk miles";
+"day_average_walk_time" = "Day average walk time";
+"day_average_walk_calory" = "Day average walk kCalories";
+//<睡眠>
+"sleep_details" = "Sleep details";
+"sleep_duration" = "Sleep Duration";
+"deep_sleep_time" = "Deep sleep time";
+"light_sleep_time" = "Light sleep time";
+"sleep_start_time" = "Sleep start time";
+"wake_up_time" = "Wake up time";
+"awake_duration" = "Awake Duration";
+"average_sleep_time" = "Average sleep time";
+"average_deep_sleep_time" = "Average deep sleep time";
+"average_light_sleep_time" = "Average light sleep time";
+"average_sleep_start_time" = "Average start sleep time";
+"average_sleep_end_time" = "Average wake time";
+"average_sleep_awake_time" = "Average awake time";
+//<锻炼>
+"exercising_volume" = "Exercising volume";
+//日程
+"schedule"="schedule";
+"schedule_delete"="delete";
+
+//----------------------------------设置页面----------------------------------
+"setting" = "Setting";
+"my_band" = "My Band";
+"personal_information" = "Personal info";
+"band_reminder" = "Band reminder";
+"sport_target" = "Sport target";
+"join_improvement_program" = "Join Improvement Program";
+"join_improvement_program_detail" = "We will use your data for analysis, to help make         enhance the user experience.";
+"about" = "About";
+//<我的手环>
+"current_power" = "Current power";
+"used_days" = "Has been used for four days";
+"band_id" = "Band ID";
+"unbund_band" = "Unbund band";
+"band_status" = "Band status";
+"check_band_firmware" = "Detection of bracelets firmware";
+"last_sync_time" = "Last time synchronization time";
+"band_mac" = "Band MAC address";
+"band_BLE" = "Band BLE";
+"band_connected" = "Connected";
+"band_disconnect"= "Disconnect";
+
+"result_after_unbinding" = "After unbinding, the phone will not be able to obtain information on hand inside the ring";
+"what_you_can_do_after_unbinding" = "After unbinding, other phone connection bracelet,or replace the novice ring";
+"unbund" = "Unbundling";
+//<<手环更新>>
+"band_update" = "Band Update";
+"checking_for_updates" = "Checking for updates...";
+"new_version_software_can_be_updated" = "A new version of the software can be updated bracelet.";
+"update" = "Update";
+"updating" = "Updating...";
+"updated_message" = "Lenovo free pay 1.1 \n Your bracelet is the latest version of the software.";
+"already_latest_version" = "Your bracelet is the latest version of the software.";
+//<<个人信息>>
+"icon" = "Icon";
+"nickname" = "Nickname";
+"gender" = "Gender";
+"age" = "Age";
+"height" = "Height";
+"weight" = "Weight";
+"logout" = "Log out";
+"logout_message" = "Exit can disrupt the mobile phones and hand ring connection, confirm to continue?";
+//<<手环提醒>>
+"band_reminds" = "Band reminds";
+"remind_set" = "Remind setting";
+"close_remind_message" = "After closing, bracelet will no longer appear corresponding to remind.";
+"alarm_reminder" = "Alarm reminder";
+"calls_reminder" = "Calls remind";
+"sms_reminder" = "Sms reminder";
+"calendar_reminder" = "Calendar reminder";
+"E-mail_reminder" = "E-mail reminder";
+"QQ_reminder" = "QQ reminder";
+"WeChat_reminder" = "WeChat reminder";
+"Facebook_reminder" = "Facebook reminder";
+"Twitter_reminder" = "Twitter reminder";
+"Whatsapp_reminder" = "Whatsapp reminder";
+"connect_band_then_modify_remind_setting" = "Please connect the bracelet, and \n then modify alert settings.";
+//<<闹钟提醒>>
+"alarm" = " Alarm";
+"delete_alarm" = "Delete alarm:";
+"add_alarm" = "Add alarm";
+"edit_alarm" = "Edit alarm";
+"remind_tips" = "Remind tips";
+"input_simple_tips" = "Click on the input simple tips";
+"smart_reminder" = "Smart reminder";
+"repeat" = "Repeat";
+"wake_up_interval" = "Wake up interval";
+"select_all" = "All";
+//<<运动目标>>
+"sport" = "Sport";
+"WHO_suggest_about_sport" = "According to World Health Organization recommendations, combined with your personal information, \ n we recommend moderate exercise for your 40 minutes, the equivalent of brisk walking 8,000 steps.";
+"steps_step" = "Steps/Step";
+"calorie_kcal" = "Calorie/kcal";
+"a_hamburger" = "A hamburger";
+"time_min" = "Time/min";
+"distance_km" = "Distance/km";
+//<<睡眠目标>>
+"sleep_target" = "Sleep target";
+"WHO_suggest_about_sleep" = "According to World Health Organization recommendations, combined with your personal information, \ n adults sleep quality 7-8 hours (not less than six hours).";
+"office_worker" = "Office worker";
+"night_owl" = "Night owl";
+"students" = "Students";
+//<<锻炼目标>>
+"exercise_target" = "Exercise Target";
+"exercise_distance" = "Exercising distance";
+
