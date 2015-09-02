@@ -8,7 +8,6 @@
 
 #import "HomeViewController.h"
 #import "SetUpViewController.h"
-#import "DataBase.h"
 
 #import "ThirdPartyLoginManager.h"
 #import "DailyViewController.h"
@@ -45,6 +44,7 @@
     TrainingViewController *TrainingVC;
     SleepViewController *SleepVC;
     NSInteger currentIndex;
+    CustomButton *syncButton;
 }
 @property (nonatomic, strong)NSTimer *ssoTimer;//单点登录定时器
 @property (nonatomic,strong)UIPageControl *pageControl;
@@ -79,22 +79,7 @@
     self.segmentTationLineL.hidden = NO;
     self.segmentTationLineR.hidden = NO;
     currentIndex = 0;
-    //add by wsf for ssoTest
-//    sso = [SSOTest new];
-//    [sso initNet];
-//
-//    if ([[NSUserDefaults standardUserDefaults] stringForKey:@"UUID"] == nil) {
-//        NSString *uuid = [[[UIDevice currentDevice] identifierForVendor] UUIDString];
-//        [sso initUploadEnvAndSubmitUUID];
-//        [[NSUserDefaults standardUserDefaults] setValue:uuid forKey:@"UUID"];
-//    }
-//    
-//    [self checkUUID];
-//    _ssoTimer = [NSTimer scheduledTimerWithTimeInterval:30.0 target:self selector:@selector(checkUUID) userInfo:nil repeats:YES];
-
-    //add end
     [self.navigationController setNavigationBarHidden:NO];
-    
     [self.leftBtn setImage:[UIImage imageNamed:@"daily_more"] forState:UIControlStateNormal];
     [self.leftBtn setTitle:nil forState:UIControlStateNormal];
     [self.leftBtn addTarget:self action:@selector(gotoBackBtnClick) forControlEvents:UIControlEventTouchUpInside];
@@ -107,82 +92,9 @@
     [self.rightBtn addTarget:self action:@selector(goRight) forControlEvents:UIControlEventTouchUpInside];
     self.titleLabel.text = [NSString stringWithFormat:@"联想自由付·%@",NSLocalizedString(@"daily", nil)];
     self.view.backgroundColor = ColorRGB(48, 54, 60);
-    
-//    // Do any additional setup after loading the view.
-//    if ([self respondsToSelector:@selector(edgesForExtendedLayout)])
-//    {
-//        self.edgesForExtendedLayout = UIRectEdgeNone;
-//    }
-    [DataBase updateTable];
-//    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7)
-//    {
-//        self.navigationController.navigationBar.barTintColor = navigationColor;
-//    }
-//    else
-//    {
-//        self.navigationController.navigationBar.tintColor= navigationColor;
-//    }
-//    
-//    DailyViewController *oneViewController = [[DailyViewController alloc] init];
-//    oneViewController.title = NSLocalizedString(@"daily", nil);
-//    oneViewController.view.backgroundColor = [UIColor whiteColor];
-//    int lineWidth = 90;
-//    if (iPhone4) {
-//        
-//        lineWidth = 80;
-//    }
-//    else if (iPhone6||iPhone6plus)
-//    {
-//        lineWidth = 115;
-//    }
-//    [oneViewController drawShadeChartView:[TestDataModel getModelDataForShadeChart] withLineWidth:lineWidth withShow:YES];
-//    PayViewController *twoViewController = [[PayViewController alloc] init];
-//    
-//    twoViewController.title = NSLocalizedString(@"pay", nil);
-//    twoViewController.view.backgroundColor = [UIColor whiteColor];
-//    
-//    SleepViewController *threeViewController = [[SleepViewController alloc] init];
-//    threeViewController.title = NSLocalizedString(@"sleep", nil);
-//    threeViewController.view.backgroundColor = [UIColor whiteColor];
-//    [threeViewController drawViewwithData:[TestDataModel getModelDataForPieChart] showColor:YES];
-//    
-//    TrainingViewController *fourViewController = [[TrainingViewController alloc] init];
-//    fourViewController.title = NSLocalizedString(@"exercise", nil);
-//    fourViewController.view.backgroundColor = [UIColor whiteColor];
-//    [fourViewController drawShadeChartView:[TestDataModel getExerciseModelDataForShadeChart] withLineWidth:32.0f withShow:YES];
-//    
-//    TrainingViewController *fourViewController
-//    SCNavTabBarController *navTabBarController = [[SCNavTabBarController alloc] init];
-//    navTabBarController.subViewControllers = @[oneViewController, twoViewController, threeViewController, fourViewController];
-//    navTabBarController.showArrowButton = NO;
-//    navTabBarController.delegate = self;
-//    [navTabBarController addParentController:self];
-//    
-////    _pageControl = [[UIPageControl alloc]initWithFrame:CGRectMake(SCREEN_WIDTH /2- 50, SCREEN_HEIGHT - 110, 100, 30)];
-////    _pageControl.numberOfPages = 4;
-////    _pageControl.currentPage = 0;
-////    _pageControl.currentPageIndicatorTintColor = [UIColor colorWithRed:0 green:204/255.0 blue:204/255.0 alpha:1];
-////    navTabBarController.pageControl = _pageControl;
-//    pageImage = [[UIImageView alloc]initWithFrame:CGRectMake(SCREEN_WIDTH /2- 33, SCREEN_HEIGHT - 80, 66, 4.5)];
-//    pageImage.image = [UIImage imageNamed:@"home_page_1"];
-//    [self.view addSubview:pageImage];
-    
-    [DataBase updateTable];
-    [self performSelector:@selector(BLEConnectStatu) withObject:self afterDelay:2.0f];
-    //    [HTTPManage connectServerWithblock:^(NSData *result,NSError *error)
-    //    {
-    //        NSLog(@"error=%@",error.description);
-    //    }];
-    [self scanBandAndConnectBand];
+
+    [self performSelector:@selector(BLEConnectStatu) withObject:self afterDelay:0.5f];
     [self addSubView0819];
-}
-- (void)scanBandAndConnectBand
-{
-    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"defaultBand"]) {
-        [[BLEManage shareCentralManager]startscanPeripheral];
-    }
-    
-    
 }
 
 -(void)gotoBackBtnClick
@@ -204,18 +116,23 @@
 - (void)BLEConnectStatu
 {
     
-    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"isFirstOpen"]){
-        TopAler *top = [TopAler shareTopAler];
-        BLEManage *ble = [BLEManage shareCentralManager];
-        [ble startscanPeripheral];
-        [ble connectState:^(BOOL ok) {
-            if (ok) {
-                top.showText = @"连接成功";
-            }else{
-                top.showText = @"手环已断开，请检查设备";
-            }
-            [top startShow];
-        }];
+    NSArray *vcArray = [NSArray arrayWithArray:self.navigationController.viewControllers];
+    id vHome = vcArray[0];
+    if ([vHome isKindOfClass:[HomeViewController class]]) {
+        if ([[NSUserDefaults standardUserDefaults]objectForKey:@"isFirstOpen"]){
+            TopAler *top = [TopAler shareTopAler];
+            BLEManage *ble = [BLEManage shareCentralManager];
+            [ble startscanPeripheral];
+            [ble connectState:^(BOOL ok) {
+                if (ok) {
+                    top.showText = @"连接成功";
+                }else{
+                    top.showText = @"手环已断开，请检查设备";
+                }
+                [top startShow];
+            }];
+        }
+
     }
 }
 
@@ -313,7 +230,7 @@
     /**
      同步按钮
      */
-    CustomButton *syncButton = [[CustomButton alloc]initWithFrame:CGRectMake(CGRectGetMaxX(self.view.frame) - 136, CGRectGetMidY(electricImageView.frame) -18,100, 36)];
+    syncButton = [[CustomButton alloc]initWithFrame:CGRectMake(CGRectGetMaxX(self.view.frame) - 136, CGRectGetMidY(electricImageView.frame) -18,100, 36)];
     syncButton.leftImageView.image = [UIImage imageNamed:@"daily_synchronous"];
 
     syncButton.rightLabel.text = @"未同步";
@@ -342,23 +259,25 @@
     [self addChildViewController:backVC];
     [self.view addSubview:backVC.view];
     
-    dailyVC = [DailyViewController new];
-    dailyVC.view.frame = CGRectMake(0, 0, CGRectGetWidth(backVC.view.frame), CGRectGetHeight(backVC.view.frame));
-    [backVC addChildViewController:dailyVC];
-    [backVC.view addSubview:dailyVC.view];
-    currentVC = dailyVC;
+
     
-    SleepVC = [SleepViewController new];
-    SleepVC.view.frame = CGRectMake(0, 0, CGRectGetWidth(backVC.view.frame), CGRectGetHeight(backVC.view.frame));
+    SleepVC = [[SleepViewController alloc]init];
+    SleepVC.view.frame = CGRectMake(0, 0, CGRectGetWidth(self.view.frame), CGRectGetHeight(self.view.frame));
     [backVC addChildViewController:SleepVC];
     
     TrainingVC = [TrainingViewController new];
-    TrainingVC.view.frame = CGRectMake(0, 0, CGRectGetWidth(backVC.view.frame), CGRectGetHeight(backVC.view.frame));
+    TrainingVC.view.frame = CGRectMake(0, 0, CGRectGetWidth(self.view.frame), CGRectGetHeight(self.view.frame));
     [backVC addChildViewController:TrainingVC];
     
     PayVC = [PayViewController new];
     PayVC.view.frame = CGRectMake(0, 0, CGRectGetWidth(backVC.view.frame), CGRectGetHeight(backVC.view.frame));
     [backVC addChildViewController:PayVC];
+    
+    dailyVC = [DailyViewController new];
+    dailyVC.view.frame = CGRectMake(0, 0, CGRectGetWidth(self.view.frame), CGRectGetHeight(self.view.frame));
+    [backVC addChildViewController:dailyVC];
+    [backVC.view addSubview:dailyVC.view];
+    currentVC = dailyVC;
     
 }
 /**
@@ -377,8 +296,15 @@
  */
 - (void)clickSyncButton:(CustomButton*)sender
 {
-    NSLog(@"clickSyncButton");
-    [[[HistoryData alloc]init] getHostoryDataRequest];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [[[DateAndWeatherInformation alloc]init] timeSync];
+    });
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [[[DateAndWeatherInformation alloc]init] weatherSync];
+    });
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [[[HistoryData alloc]init] getHostoryDataRequest];
+    });
     sender.rightLabel.text = [NSString stringWithFormat:@"最近同步%@",[self syncDate]];
 
 }
@@ -401,6 +327,7 @@
 - (void)selectTabItemIndex:(int)index
 {
     NSLog(@"%d",index);
+    UIViewAnimationOptions options = UIViewAnimationOptionLayoutSubviews ;//UIViewAnimationOptionLayoutSubviews
     switch (index) {
         case 0:
         {
@@ -408,12 +335,12 @@
                 return;
             }
             
-            [backVC transitionFromViewController:currentVC toViewController:dailyVC duration:0.5 options:UIViewAnimationOptionLayoutSubviews animations:^{
+            [backVC transitionFromViewController:currentVC toViewController:dailyVC duration:0.1 options:options animations:^{
                 
             } completion:^(BOOL finished) {
                 
             }];
-             self.titleLabel.text =  [NSString stringWithFormat:@"联想自由付·%@",NSLocalizedString(@"daily", nil)];
+            self.titleLabel.text =  [NSString stringWithFormat:@"联想自由付·%@",NSLocalizedString(@"daily", nil)];
             currentVC = dailyVC;
             currentIndex = 0;
         }
@@ -423,7 +350,7 @@
             if (currentIndex == 1) {
                 return;
             }
-            [backVC transitionFromViewController:currentVC toViewController:PayVC duration:0.5 options:UIViewAnimationOptionLayoutSubviews animations:^{
+            [backVC transitionFromViewController:currentVC toViewController:PayVC duration:0.1 options:options animations:^{
                 
             } completion:^(BOOL finished) {
                 
@@ -438,7 +365,7 @@
             if (currentIndex == 2) {
                 return;
             }
-            [backVC transitionFromViewController:currentVC toViewController:SleepVC duration:0.5 options:UIViewAnimationOptionLayoutSubviews animations:^{
+            [backVC transitionFromViewController:currentVC toViewController:SleepVC duration:0.1 options:options animations:^{
                 
             } completion:^(BOOL finished) {
                 
@@ -453,7 +380,7 @@
             if (currentIndex == 3) {
                 return;
             }
-            [backVC transitionFromViewController:currentVC toViewController:TrainingVC duration:0.1 options:UIViewAnimationOptionLayoutSubviews animations:^{
+            [backVC transitionFromViewController:currentVC toViewController:TrainingVC duration:0.1 options:options animations:^{
                 
             } completion:^(BOOL finished) {
                 
@@ -466,8 +393,8 @@
         default:
             break;
     }
-    
 }
+
 - (NSString*)syncDate
 {
     NSDate *date = [NSDate date];

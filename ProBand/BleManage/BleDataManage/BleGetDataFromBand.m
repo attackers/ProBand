@@ -9,11 +9,10 @@
 #import "BleGetDataFromBand.h"
 
 #import "BleSendDataToBand.h"
-#import "original_dataManage.h"
+//#import "original_dataManage.h"
 #import "BluetoothManage.h"
 #import "LocalNotifyManager.h"
 #import "PlayAudioManager.h"
-#import "DataBase.h"
 @interface BleGetDataFromBand()
 {
     t_bluetooth_sourceData _bluetoothSourceData;     //源数据结构体
@@ -374,23 +373,15 @@ SINGLETON_SYNTHE
                                         @"count":[NSString stringWithFormat:@"%d",count],
                                         @"type":[NSString stringWithFormat:@"%d",type]}];
         */
-      
-        __block  FMDatabase *_fmdb= [DataBase setup];
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             
-            
-          
-            NSString *sql = [NSString stringWithFormat:@"select count(*) from t_original_data where userid = '%@' and time='%@'",[Singleton getUserID],time];
-            int number=[[_fmdb stringForQuery:sql] intValue];
-            NSLog(@"sql=%@",sql);
-            NSLog(@"count=%d",number);
-            if (number==0)
-            {
-                sql=[NSString stringWithFormat:@"INSERT INTO  t_original_data (userId,flag,date,count,type,time)  VALUES ('%@','%@','%@','%@','%@','%@') ",[Singleton getUserID],@"0",[time componentsSeparatedByString:@" "][0],[NSString stringWithFormat:@"%d",count],[NSString stringWithFormat:@"%d",type],time];
-                [_fmdb executeUpdate:sql];
-                
+            //插入某一条数据，若存在则更新:by Star
+            NSString *sqlExist = [NSString stringWithFormat:@"select count(*) from t_original_data where userid = '%@' and time='%@'",[Singleton getUserID],time];
+            BOOL exist = [DBOPERATOR checkTheDataExistOnDB:sqlExist];
+            if (!exist) {
+                NSString *insertSql =[NSString stringWithFormat:@"INSERT INTO  t_original_data (userId,flag,date,count,type,time)  VALUES ('%@','%@','%@','%@','%@','%@') ",[Singleton getUserID],@"0",[time componentsSeparatedByString:@" "][0],[NSString stringWithFormat:@"%d",count],[NSString stringWithFormat:@"%d",type],time];
+                [DBOPERATOR insertDefaultDataToSQL:insertSql];
             }
-             
         });
         
    
@@ -416,9 +407,9 @@ SINGLETON_SYNTHE
          //[original_dataManage insertWithArray:_dataSourceArray];
         //[_dataSourceArray removeAllObjects];
         //将数据按日合并 保存到数据库
-        [AlgorithmHelper updateAllData];
-        
-        [original_dataManage updateAllFlag];//将数据标记已经合并保存
+//        [AlgorithmHelper updateAllData];
+//        
+//        [original_dataManage updateAllFlag];//将数据标记已经合并保存
         
     }
     else

@@ -167,7 +167,7 @@ SINGLETON_SYNTHE
         }
         else//不存在则插入该数据:为什么插入的第一条数据是1970年的？
         {
-            [[FMDBManage shareFMDBManage]insertDataFromTable:StepTotalTable insertValueDic:totalDic];
+            [DBMANAGER insertSingleDataToDB:StepTotalTable withDictionary:totalDic];
         }
         }
     }

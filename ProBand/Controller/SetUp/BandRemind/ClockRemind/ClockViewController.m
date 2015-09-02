@@ -9,8 +9,8 @@
 #import "ClockViewController.h"
 #import "EditClockController.h"
 #import "SubSegmentedControl.h"
-#import "alarmManage.h"
-#import "alarm_Model.h"
+#import "t_alarmModel.h"
+#import "AlarmManager.h"
 #import "SendCommandToPeripheral.h"
 #import "GetDataForPeriphera.h"
 @interface ClockViewController ()<UITableViewDataSource, UITableViewDelegate,UIAlertViewDelegate>
@@ -24,7 +24,7 @@
 @implementation ClockViewController
 - (void)addTestData
 {
-    alarm_Model *model = [[alarm_Model alloc] init];
+    t_alarmModel *model = [[t_alarmModel alloc] init];
     NSString *open_id = [Singleton getValueWithKey:@"open_id"];
     if (open_id == nil) return;
     model.userid = open_id;
@@ -36,20 +36,23 @@
     model.days_of_week = @"126";
     model.interval_time = @"30";
     model.notification = @"222!!!";
-    model.status = @"1";
-    [alarmManage addDataToDB:model];
+    model.alarm_switch = @"1";
+    
+    [AlarmManager insertOrUpdateAlarmData:model];
 }
 
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [[[AlermInformation alloc]init] alermList];
-    [[[GetDataForPeriphera alloc] init]returnMyAlarmList:^(NSMutableArray *alermArray) {
-        NSString *string = [alermArray componentsJoinedByString:@"-"];
-        NSLog(@"%@",string);
-        
+//    [[[AlermInformation alloc]init] alermList];
+    NSMutableArray *alerS = [NSMutableArray array];
+    [[GetDataForPeriphera alloc]returnMyAlarmList:^(NSMutableArray *alermArray) {
+        [alerS addObject:alermArray];
     }];
-    NSArray *arr = [alarmManage findAll];
+    alarmArr = [NSMutableArray arrayWithArray:alerS];
+
+    NSArray *arr = [AlarmManager getAlarmDicFromDB];
+    
     
     alarmArr = [NSMutableArray arrayWithArray:arr];
     [_tableView reloadData];
@@ -65,12 +68,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     //    [self addTestData];
-    NSMutableArray *alerS = [NSMutableArray array];
-    [[AlermInformation alloc] alermList];
-    [[GetDataForPeriphera alloc]returnMyAlarmList:^(NSMutableArray *alermArray) {
-        [alerS addObject:alermArray];
-    }];
-    alarmArr = [NSMutableArray arrayWithArray:alerS];
     
     self.titleLabel.text = NSLocalizedString(@"alarm", nil);
     self.rightBtn.hidden = NO;
@@ -137,9 +134,10 @@
             [vi removeFromSuperview];
         }
     }
-    alarm_Model *model =  alarmArr[indexPath.row];
-    NSString *time = [alarm_Model minuteToTime:model.startTimeMinute];
-    NSString *text = model.notification;
+    NSDictionary *dic =  alarmArr[indexPath.row];
+    NSString *timeStr = dic[@"startTimeMinute"];
+    NSString *time = [AlarmManager minuteToTime:timeStr];
+    NSString *text = dic[@"notification"];
 
     UILabel *timeLabel = [PublicFunction getlabel:CGRectMake(13, 0, 60, 50) text:time fontSize:22 color:COLOR(90, 90, 90)];
     timeLabel.textAlignment = NSTextAlignmentCenter;
@@ -165,7 +163,8 @@
     int index = indexPath.row;
     NSLog(@"%d",index);
     NSLog(@"%@",alarmArr);
-    edit.currentModel = alarmArr[index];
+    NSDictionary *alarmDic = alarmArr[index];
+    edit.currentModel = [t_alarmModel convertDataToModel:alarmDic];
     [self.navigationController pushViewController:edit animated:YES];
 }
 
@@ -223,16 +222,18 @@
         deletLabel.font = [UIFont boldSystemFontOfSize:19];
         
         int row = touchPath.row;
-        alarm_Model *model = alarmArr[row];
+       id model = alarmArr[row];
 
         UILabel *alarmTimeLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, CGRectGetMaxY(deletLabel.frame) + 5, CGRectGetWidth(backGrunpView.frame), 24)];
-        alarmTimeLabel.text = [alarm_Model minuteToTime:model.startTimeMinute];
+        NSDictionary* mSMDic = [NSDictionary dictionaryWithDictionary:(NSDictionary*)model];
+        NSString *sT = [AlarmManager minuteToTime:[mSMDic objectForKey:@"startTimeMinute"]];
+        alarmTimeLabel.text = sT;
         alarmTimeLabel.textColor = [UIColor orangeColor];
         alarmTimeLabel.font = [UIFont systemFontOfSize:23];
         alarmTimeLabel.textAlignment = NSTextAlignmentCenter;
         
         UILabel *titleLabel = [[UILabel alloc]initWithFrame:CGRectMake(0, CGRectGetMaxY(alarmTimeLabel.frame)+5, CGRectGetWidth(backGrunpView.frame), 24)];
-        titleLabel.text = model.notification;
+        titleLabel.text = [mSMDic objectForKey:@"notification"];
         titleLabel.textColor = [UIColor redColor];
         titleLabel.font = [UIFont systemFontOfSize:14];
         titleLabel.textAlignment = NSTextAlignmentCenter;
@@ -272,9 +273,10 @@
                 //row = row+1;
                 
                 //这里移除的id不正确，需要重新获取:by Star
-                NSArray *array = [alarmManage findAll];
-                alarm_Model *model = [array objectAtIndex:row];
-                [alarmManage remove:[NSString stringWithFormat:@"%@",model.Id]];
+                NSArray *array = [AlarmManager getAlarmDicFromDB];
+                NSDictionary *model = [array objectAtIndex:row];
+                
+                [AlarmManager removeAlarm:[model objectForKey:@"alarmId"]];
                 [_tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:touchPath] withRowAnimation:UITableViewRowAnimationMiddle];
                 [_tableView endUpdates];
                 

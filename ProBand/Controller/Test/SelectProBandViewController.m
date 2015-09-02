@@ -72,7 +72,7 @@ static BOOL onlyPush;
     
     [self addsubview];
     
-    __weak SelectProBandViewController *weakSelf = self;
+//    __weak SelectProBandViewController *weakSelf = self;
     [[BLEManage shareCentralManager]connectState:^(BOOL ok) {
         
         if (ok) {

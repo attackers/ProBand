@@ -7,13 +7,14 @@
 //
 
 #import "BleSendDataToBand.h"
-#import "ClockModel.h"
 #import "BluetoothManage.h"
-#import "UserTargetModel.h"
-#import "UserInfoModel.h"
+
 #import "GetCityDataModel.h"
 #import "DateHandle.h"
 #import "ClockUnit.h"
+#import "AlarmManager.h"
+#import "t_userInfo.h"
+#import "UserInfoManager.h"
 @interface BleSendDataToBand()
 {
     
@@ -329,7 +330,7 @@ SINGLETON_SYNTHE
  */
 -(void)sendUserInfoToBand
 {
-    UserInfoModel *usermodel = [UserInfoModel getUserInfoDic];
+    t_userInfo *usermodel = [UserInfoManager getUserInfoDic];
     //个人信息
     NSMutableData *userInfoData = [[NSMutableData alloc]initWithData:[BleSinglten intTochar:USER_INFO withReserved:YES]];
     user_Info_data userInfoDataStruct;
@@ -344,20 +345,20 @@ SINGLETON_SYNTHE
  */
 -(void)sendUserGoalToBand
 {
-    UserTargetModel *userTargetModel = [UserTargetModel getUserTargetInfoDic];
-    //个人目标，目标卡路里/距离为预留均为两个字节
-    NSMutableData *usergoaloData = [[NSMutableData alloc]initWithData:[BleSinglten intTochar:PERSONAL_GOAL withReserved:YES]];
-    NSLog(@"~~usergoaloData~~~~%@",usergoaloData);
-    user_goal_data usergoalDataStruct;
-    usergoalDataStruct.stepGoal = [userTargetModel.stepTarget integerValue];
-    usergoalDataStruct.sleepGoal = [userTargetModel.sleepTarget integerValue];
-    
-    usergoalDataStruct.stepGoal = (usergoalDataStruct.stepGoal & 0xFF)<<8 | (usergoalDataStruct.stepGoal>>8);
-    usergoalDataStruct.sleepGoal = (usergoalDataStruct.sleepGoal & 0xFF)<<8 | (usergoalDataStruct.sleepGoal>>8);
-    usergoalDataStruct.calorieGoal = (usergoalDataStruct.calorieGoal & 0xFF)<<8 | (usergoalDataStruct.calorieGoal>>8);
-    [usergoaloData appendBytes:&usergoalDataStruct length:sizeof(user_goal_data)];
-    NSLog(@"sendUserGoalToBand %@",usergoaloData);
-    [self.bleConnectManager sendData:usergoaloData];
+//    UserTargetModel *userTargetModel = [UserTargetModel getUserTargetInfoDic];
+//    //个人目标，目标卡路里/距离为预留均为两个字节
+//    NSMutableData *usergoaloData = [[NSMutableData alloc]initWithData:[BleSinglten intTochar:PERSONAL_GOAL withReserved:YES]];
+//    NSLog(@"~~usergoaloData~~~~%@",usergoaloData);
+//    user_goal_data usergoalDataStruct;
+//    usergoalDataStruct.stepGoal = [userTargetModel.stepTarget integerValue];
+//    usergoalDataStruct.sleepGoal = [userTargetModel.sleepTarget integerValue];
+//    
+//    usergoalDataStruct.stepGoal = (usergoalDataStruct.stepGoal & 0xFF)<<8 | (usergoalDataStruct.stepGoal>>8);
+//    usergoalDataStruct.sleepGoal = (usergoalDataStruct.sleepGoal & 0xFF)<<8 | (usergoalDataStruct.sleepGoal>>8);
+//    usergoalDataStruct.calorieGoal = (usergoalDataStruct.calorieGoal & 0xFF)<<8 | (usergoalDataStruct.calorieGoal>>8);
+//    [usergoaloData appendBytes:&usergoalDataStruct length:sizeof(user_goal_data)];
+//    NSLog(@"sendUserGoalToBand %@",usergoaloData);
+//    [self.bleConnectManager sendData:usergoaloData];
 }
 
 /**
@@ -381,31 +382,31 @@ SINGLETON_SYNTHE
  */
 -(void)sendOutoSleepSettingToBand
 {
-    UserTargetModel *userTargetModel = [UserTargetModel getUserTargetInfoDic];
-    
-    NSMutableData *outoSleepData = [[NSMutableData alloc]initWithData:[BleSinglten intTochar:AUTO_ENTER_SLEEP withReserved:YES]];
-
-    sleep_package outoSleep;
-    NSArray *tempArray = [userTargetModel.startTime componentsSeparatedByString:@":"];
-    NSLog(@"userTargetModel.startTime=%@",userTargetModel.startTime);
-    if(tempArray.count>1)
-    {
-        outoSleep.startHour = [[tempArray objectAtIndex:0] intValue];
-        outoSleep.startMinutes = [[tempArray objectAtIndex:1]intValue];
-        
-        tempArray = [userTargetModel.endTime componentsSeparatedByString:@":"];
-        outoSleep.endhour = [[tempArray objectAtIndex:0] intValue];
-        outoSleep.endMinutes = [[tempArray objectAtIndex:1] intValue];
-        [outoSleepData appendBytes:&outoSleep length:sizeof(sleep_package)];
-        
-        NSLog(@"发送同步自动睡眠设置信息时间%@-%@:%@",userTargetModel.startTime,userTargetModel.endTime,outoSleepData);
-        [self.bleConnectManager sendData:outoSleepData];
-    }
-    else
-    {
-    [self getState:BLE_SEND_WEATHER];
-    [self sendAlermSettingToBand];
-    }
+//    UserTargetModel *userTargetModel = [UserTargetModel getUserTargetInfoDic];
+//    
+//    NSMutableData *outoSleepData = [[NSMutableData alloc]initWithData:[BleSinglten intTochar:AUTO_ENTER_SLEEP withReserved:YES]];
+//
+//    sleep_package outoSleep;
+//    NSArray *tempArray = [userTargetModel.startTime componentsSeparatedByString:@":"];
+//    NSLog(@"userTargetModel.startTime=%@",userTargetModel.startTime);
+//    if(tempArray.count>1)
+//    {
+//        outoSleep.startHour = [[tempArray objectAtIndex:0] intValue];
+//        outoSleep.startMinutes = [[tempArray objectAtIndex:1]intValue];
+//        
+//        tempArray = [userTargetModel.endTime componentsSeparatedByString:@":"];
+//        outoSleep.endhour = [[tempArray objectAtIndex:0] intValue];
+//        outoSleep.endMinutes = [[tempArray objectAtIndex:1] intValue];
+//        [outoSleepData appendBytes:&outoSleep length:sizeof(sleep_package)];
+//        
+//        NSLog(@"发送同步自动睡眠设置信息时间%@-%@:%@",userTargetModel.startTime,userTargetModel.endTime,outoSleepData);
+//        [self.bleConnectManager sendData:outoSleepData];
+//    }
+//    else
+//    {
+//    [self getState:BLE_SEND_WEATHER];
+//    [self sendAlermSettingToBand];
+//    }
    
     
 }
@@ -414,7 +415,7 @@ SINGLETON_SYNTHE
  */
 -(void)sendAlermSettingToBand
 {
-    NSMutableArray * clocksArray = [[NSMutableArray alloc] initWithArray:[ClockUnit getClockModel]];
+    NSMutableArray * clocksArray = [[NSMutableArray alloc] initWithArray:[ AlarmManager getAlarmDicFromDB]];
     if ([clocksArray count] <= 0)
     {
         return;
@@ -422,17 +423,17 @@ SINGLETON_SYNTHE
     
     NSMutableData *data = [[NSMutableData alloc] initWithData:[BleSinglten intTochar:NOTICE_ALERT_CLOCK withReserved:YES]];
     [clocksArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop){
-        ClockModel *clockObj =(ClockModel *)obj;
-        if ([clockObj.status isEqualToString:@"1"])
+        t_alarmModel *clockObj = [t_alarmModel convertDataToModel:obj];
+        if ([clockObj.alarm_switch isEqualToString:@"1"])
         {
-            NSDate *alarmTime = [DateHandle stringToDate:clockObj.startTime withtype:1];
+            NSDate *alarmTime = [DateHandle stringToDate:[AlarmManager minuteToTime:clockObj.startTimeMinute] withtype:1];
             NSString *timeStr = [DateHandle dateToString:alarmTime withType:1];
             NSArray *arr = [timeStr componentsSeparatedByString:@":"];
             user_Alarm alarm;
             alarm.alarmHour = [[arr objectAtIndex:0] intValue];
-            alarm.alarmID = [clockObj.AlarmId intValue];
+            alarm.alarmID = [clockObj.alarmId intValue];
             alarm.alarmMinutes = [[arr objectAtIndex:1] intValue];
-            alarm.alarmDayofweek = [BleSinglten weekOfDayDistribution:[ClockModel sortWeek:clockObj.repeat]];
+            alarm.alarmDayofweek = [BleSinglten weekOfDayDistribution:[AlarmManager sortWeek:clockObj.days_of_week]];
             [data appendBytes:&alarm length:sizeof(user_Alarm)];
         }
     }];
@@ -496,26 +497,26 @@ SINGLETON_SYNTHE
  */
 -(void)sendInDisturbTimeSettingToBand
 {
-        UserTargetModel *targetModel = [UserTargetModel getUserTargetInfoDic];
-       if ([targetModel.botherStatus intValue] == 1) {//勿扰模式开启
-           NSMutableData *callSetData = [[NSMutableData alloc]initWithData:[BleSinglten intTochar:IOS_CALL_SET withReserved:YES]];
-           bother_package botherSet;
-           NSString *hourString = targetModel.botherStart.length >0 ? targetModel.botherStart : @"8:00";
-           NSString *minutesString = targetModel.botherEnd.length >0 ? targetModel.botherEnd : @"23:00";
-           NSArray *tempArray = [hourString componentsSeparatedByString:@":"];
-           botherSet.startHour = [[tempArray objectAtIndex:0] intValue];
-           botherSet.startMinutes = [[tempArray objectAtIndex:1]intValue];
-           
-           tempArray = [minutesString componentsSeparatedByString:@":"];
-           botherSet.endhour = [[tempArray objectAtIndex:0] intValue];
-           botherSet.endMinutes = [[tempArray objectAtIndex:1] intValue];
-           
-           [callSetData appendBytes:&botherSet length:sizeof(bother_package)];
-           NSLog(@"勿扰模式开始时间%@-%@,data数据%@",hourString,minutesString,callSetData);
-           [self.bleConnectManager sendData:callSetData];
-       }else{
-           [self didReceiveResponse];
-       }
+//        UserTargetModel *targetModel = [UserTargetModel getUserTargetInfoDic];
+//       if ([targetModel.botherStatus intValue] == 1) {//勿扰模式开启
+//           NSMutableData *callSetData = [[NSMutableData alloc]initWithData:[BleSinglten intTochar:IOS_CALL_SET withReserved:YES]];
+//           bother_package botherSet;
+//           NSString *hourString = targetModel.botherStart.length >0 ? targetModel.botherStart : @"8:00";
+//           NSString *minutesString = targetModel.botherEnd.length >0 ? targetModel.botherEnd : @"23:00";
+//           NSArray *tempArray = [hourString componentsSeparatedByString:@":"];
+//           botherSet.startHour = [[tempArray objectAtIndex:0] intValue];
+//           botherSet.startMinutes = [[tempArray objectAtIndex:1]intValue];
+//           
+//           tempArray = [minutesString componentsSeparatedByString:@":"];
+//           botherSet.endhour = [[tempArray objectAtIndex:0] intValue];
+//           botherSet.endMinutes = [[tempArray objectAtIndex:1] intValue];
+//           
+//           [callSetData appendBytes:&botherSet length:sizeof(bother_package)];
+//           NSLog(@"勿扰模式开始时间%@-%@,data数据%@",hourString,minutesString,callSetData);
+//           [self.bleConnectManager sendData:callSetData];
+//       }else{
+//           [self didReceiveResponse];
+//       }
     
 }
 
@@ -543,13 +544,14 @@ SINGLETON_SYNTHE
  *  防丢、短信、电话、微信
  */
 - (void)sendMCWSwitchState{
-    UserTargetModel *targetModel = [UserTargetModel getUserTargetInfoDic];
-    if ([targetModel.botherStatus intValue] == 1) {//勿扰模式开启
-    //    NSMutableData *mcwSwitchState = [[NSMutableData alloc]initWithData:[BleSinglten intTochar:MCW_SWITCH_STATE withReserved:YES]];
-    
-    }else{
-        [self didReceiveResponse];
-    }
+//    UserTargetModel *targetModel = [UserTargetModel getUserTargetInfoDic];
+//    if ([targetModel.botherStatus intValue] == 1)
+//    {//勿扰模式开启
+//    //    NSMutableData *mcwSwitchState = [[NSMutableData alloc]initWithData:[BleSinglten intTochar:MCW_SWITCH_STATE withReserved:YES]];
+//    
+//    }else{
+//        [self didReceiveResponse];
+//    }
 }
 - (void)sendDFUCommond{
 

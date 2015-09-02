@@ -113,7 +113,7 @@
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
-    [self.view.layer removeAllAnimations];
+//    [self.view.layer removeAllAnimations];
 //    [rotationImageView.layer removeAllAnimations];
     
 }

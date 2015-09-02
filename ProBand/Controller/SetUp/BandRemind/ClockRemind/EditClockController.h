@@ -7,10 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
-@class alarm_Model;
+@class t_alarmModel;
 #import "SubBaseViewcontroller.h"
 @interface EditClockController : SubBaseViewcontroller
 @property (nonatomic, assign) BOOL isEditType;
-@property (nonatomic, strong) alarm_Model *currentModel;
+@property (nonatomic, strong) t_alarmModel *currentModel;
 @property (nonatomic, strong) NSMutableArray *alarmArray;
 @end

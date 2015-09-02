@@ -21,11 +21,7 @@
 #import "HTTPManage.h"
 #include "encrypt.h"
 #import "SettingStatus.h"
-//#import "SettingModelManager.h"
 #import "AllModel.h"
-#import "UserInfoModel.h"
-#import "UserTargetModel.h"
-#import "StepdownModel.h"
 #import "AllModel.h"
 
 #define  appid @"23398"
@@ -182,7 +178,6 @@
         block(succ,result);
     };
     NSString *str = [NSString stringWithFormat:@"{\"userid\":\"%@\",\"appid\":\"23398\",\"options\":\"3\"}",userIdStr];
-    //NSString *str = @"{\"userid\":\"1005647\",\"appid\":\"23398\",\"options\":\"3\"}";
     NSLog(@"=str%@",str);
     string ss = encrypt::AESEncode([str UTF8String],AES_TOKEN_KEY,AES_TOKEN_IV);
    // NSLog(@"----%s",ss.c_str());
@@ -202,9 +197,6 @@
     NSLog(@"第三方登录请求串为：%@",dic);
    // [request startRequestWithType:@"POST" withUrl:url withInfo:dic isUrlEncode:YES];
     [request startRequestWithType:@"POST" withUrl:url withInfo:dic];
-   
-    
-    
 }
 
 + (NSString *)URLEncodeStringFromString:(NSString *)string
@@ -260,35 +252,35 @@
     
 }
 
-+ (void)submitUserInfoToServer:(UserInfoModel *)user withUserImage:(NSData *)userImage withUnitsFormat:(NSString *)HeightStr withUnitWeight:(NSString *)weightStr withBlock:(void (^)(BOOL, id))block
-{
-    if (!token || !user || userImage.length == 0 || !HeightStr||!weightStr) return;
-    // 非文件参数
-    NSDictionary *params = @{@"access_token" : token};
-    if (userImage.length <= 1048576){//1048576为1M
-        [self upload:@"userImage.jpg" mimeType:nil fileData:userImage params:params];
-    }
-    
-    NetWorking *request = [[NetWorking alloc]init];
-    request.completion = ^(id result,BOOL success){
-        block(success,result);
-    };
-    
-    NSString *url =[NSString stringWithFormat:@"%@fcgi-bin/platform/bin/rest.fcgi",weburl];
-    
-    NSString *nsp_params =[NSString stringWithFormat:@"{\"setting\": \"{\\\"height\\\": \\\"%@\\\",\\\"heightFormat\\\": \\\"%@\\\",\\\"weight\\\": \\\"%@\\\",\\\"weightFormat\\\": \\\"%@\\\",\\\"birthday\\\": \\\"%@\\\",\\\"nikeName\\\":\\\"%@\\\",\\\"retstring\\\": \\\"\\\"}\",\"gender\": \"%@\",\"options\": \"1\"}",user.height, HeightStr,user.weight,weightStr,user.birthDay,user.userName,user.gender];
-    NSLog(@"nsp_params:%@",nsp_params);
-    string ss = encrypt::AESEncode([nsp_params UTF8String],AES_SERVICE_KEY,AES_SERVICE_IV);
-    NSString *base64String=  [NSString stringWithCString:ss.c_str() encoding:[NSString defaultCStringEncoding]];
-    [request startRequestWithType:@"POST" withUrl:url withInfo:@{
-                                                                 @"nsp_svc":@"1",
-                                                                 @"access_token":token,
-                                                                 @"nsp_params":base64String,
-                                                                 @"nsp_ts":@"",
-                                                                 @"nsp_ver":@"",
-                                                                 @"finger_print":@""
-                                                                 }];// isUrlEncode:YES
-}
+//+ (void)submitUserInfoToServer:(UserInfoModel *)user withUserImage:(NSData *)userImage withUnitsFormat:(NSString *)HeightStr withUnitWeight:(NSString *)weightStr withBlock:(void (^)(BOOL, id))block
+//{
+//    if (!token || !user || userImage.length == 0 || !HeightStr||!weightStr) return;
+//    // 非文件参数
+//    NSDictionary *params = @{@"access_token" : token};
+//    if (userImage.length <= 1048576){//1048576为1M
+//        [self upload:@"userImage.jpg" mimeType:nil fileData:userImage params:params];
+//    }
+//    
+//    NetWorking *request = [[NetWorking alloc]init];
+//    request.completion = ^(id result,BOOL success){
+//        block(success,result);
+//    };
+//    
+//    NSString *url =[NSString stringWithFormat:@"%@fcgi-bin/platform/bin/rest.fcgi",weburl];
+//    
+//    NSString *nsp_params =[NSString stringWithFormat:@"{\"setting\": \"{\\\"height\\\": \\\"%@\\\",\\\"heightFormat\\\": \\\"%@\\\",\\\"weight\\\": \\\"%@\\\",\\\"weightFormat\\\": \\\"%@\\\",\\\"birthday\\\": \\\"%@\\\",\\\"nikeName\\\":\\\"%@\\\",\\\"retstring\\\": \\\"\\\"}\",\"gender\": \"%@\",\"options\": \"1\"}",user.height, HeightStr,user.weight,weightStr,user.birthDay,user.userName,user.gender];
+//    NSLog(@"nsp_params:%@",nsp_params);
+//    string ss = encrypt::AESEncode([nsp_params UTF8String],AES_SERVICE_KEY,AES_SERVICE_IV);
+//    NSString *base64String=  [NSString stringWithCString:ss.c_str() encoding:[NSString defaultCStringEncoding]];
+//    [request startRequestWithType:@"POST" withUrl:url withInfo:@{
+//                                                                 @"nsp_svc":@"1",
+//                                                                 @"access_token":token,
+//                                                                 @"nsp_params":base64String,
+//                                                                 @"nsp_ts":@"",
+//                                                                 @"nsp_ver":@"",
+//                                                                 @"finger_print":@""
+//                                                                 }];// isUrlEncode:YES
+//}
 
 + (void)getUserInfoFromServerWithBlock:(void (^)(BOOL, id))block
 {
@@ -319,28 +311,28 @@
 
 
 
-+ (void)setUpUserTarget:(UserTargetModel *)userTarger withBlock:(void (^)(BOOL, id))block
-{
-    NSLog(@"setUpUserTarget: to server");
-    NetWorking *request = [[NetWorking alloc]init];
-    request.completion = ^(id result,BOOL success){
-        block(success,result);
-    };
-    
-    NSString *url =[NSString stringWithFormat:@"%@fcgi-bin/platform/bin/rest.fcgi",weburl];
-    //userid,stepTarget,startTime,endTime,sleepTarget,botherStart,botherEnd,botherStatus
-    NSString *nsp_params = [NSString stringWithFormat:@"{\"setting\": \"{\\\"stepTarget\\\":\\\"%@\\\"}\",\"options\": \"2\"}",userTarger.stepTarget];
-    string ss = encrypt::AESEncode([nsp_params UTF8String],AES_SERVICE_KEY,AES_SERVICE_IV);
-    NSString *base64String=  [NSString stringWithCString:ss.c_str() encoding:[NSString defaultCStringEncoding]];
-    [request startRequestWithType:@"POST" withUrl:url withInfo:@{
-                                                                 @"nsp_svc":@"1",
-                                                                 @"access_token":token,
-                                                                 @"nsp_params":base64String,
-                                                                 @"nsp_ts":@"",
-                                                                 @"nsp_ver":@"",
-                                                                 @"finger_print":@""
-                                                                 } isUrlEncode:YES];
-}
+//+ (void)setUpUserTarget:(UserTargetModel *)userTarger withBlock:(void (^)(BOOL, id))block
+//{
+//    NSLog(@"setUpUserTarget: to server");
+//    NetWorking *request = [[NetWorking alloc]init];
+//    request.completion = ^(id result,BOOL success){
+//        block(success,result);
+//    };
+//    
+//    NSString *url =[NSString stringWithFormat:@"%@fcgi-bin/platform/bin/rest.fcgi",weburl];
+//    //userid,stepTarget,startTime,endTime,sleepTarget,botherStart,botherEnd,botherStatus
+//    NSString *nsp_params = [NSString stringWithFormat:@"{\"setting\": \"{\\\"stepTarget\\\":\\\"%@\\\"}\",\"options\": \"2\"}",userTarger.stepTarget];
+//    string ss = encrypt::AESEncode([nsp_params UTF8String],AES_SERVICE_KEY,AES_SERVICE_IV);
+//    NSString *base64String=  [NSString stringWithCString:ss.c_str() encoding:[NSString defaultCStringEncoding]];
+//    [request startRequestWithType:@"POST" withUrl:url withInfo:@{
+//                                                                 @"nsp_svc":@"1",
+//                                                                 @"access_token":token,
+//                                                                 @"nsp_params":base64String,
+//                                                                 @"nsp_ts":@"",
+//                                                                 @"nsp_ver":@"",
+//                                                                 @"finger_print":@""
+//                                                                 } isUrlEncode:YES];
+//}
 
 + (void)getUserTargetFromServerWithBlock:(void (^)(BOOL, id))block
 {
@@ -363,77 +355,77 @@
                                                                  } isUrlEncode:YES];
 }
 
-+ (void)submitUserSetting:(AllModel *)models  WithBlock:(void (^)(BOOL, id))block
-{
-    if (token.length==0 || !models.setStatusObj || !models.clockModelArr.count || !models.tagetModelObj) return;
-    
-    NetWorking *request = [[NetWorking alloc]init];
-    request.completion = ^(id result,BOOL success){
-        block(success,result);
-    };
-
-    union switchStatus
-    {
-        struct{
-            char cloudBackup:1;//一键备份
-            char phoneAntiLost:1;//手机防丢
-            char unlockPhone:1;//手机解锁
-            char messageRefused:1;//拒接回短信
-            char contactsReceiveOnly:1;//仅接收通讯录
-            char searchPhone:1;        //手机查找
-            char TwitterSwitch:1;
-            char FaceBookSwitch:1;
-            char WhatsappSwitch:1;
-            char weatherSwitch:1;
-            char batteryAlertSwitch:1;  //电量推送
-            char wecatSwitch:1;
-            char callSwitch:1;
-            char smsSwitch:1;
-        }switchs;
-        unsigned int switchsS;
-    }sss;
-    memset(&sss, 0, sizeof(sss));
-    sss.switchs.smsSwitch = *(char *)[models.setStatusObj.smsStatus UTF8String];
-    sss.switchs.callSwitch = *(char *)[models.setStatusObj.callState UTF8String];
-    sss.switchs.wecatSwitch = *(char *)[models.setStatusObj.wecatState UTF8String];
-    sss.switchs.batteryAlertSwitch = *(char *)[models.setStatusObj.BatteryPowerPush UTF8String];
-    sss.switchs.weatherSwitch = *(char *)[models.setStatusObj.weatherState UTF8String];
-    sss.switchs.WhatsappSwitch = *(char *)[models.setStatusObj.WhatsappState UTF8String];
-    sss.switchs.FaceBookSwitch = *(char *)[models.setStatusObj.FaceBookState UTF8String];
-    sss.switchs.TwitterSwitch = *(char *)[models.setStatusObj.TwitterState UTF8String];
-    sss.switchs.searchPhone = *(char *)[models.setStatusObj.FindPhone UTF8String];
-    sss.switchs.phoneAntiLost = *(char*)[models.setStatusObj.LinkLostPhone UTF8String];
-    sss.switchs.cloudBackup = *(char *)[models.setStatusObj.ColudBackUp UTF8String];
-    
-    NSLog(@"推送开关状态-->>%d", sss.switchsS);
-
-    NSMutableString *stringM = [NSMutableString string];
-    for (int i = 0; i < models.clockModelArr.count; i++) {
-        ClockModel *model = models.clockModelArr[i];
-        NSString *string = [NSString stringWithFormat:@"{\\\"alarmName\\\":\\\"%@\\\",\\\"alarmTime\\\":\\\"%@\\\",\\\"interval\\\":\\\"%@\\\",\\\"repeat\\\":\\\"%d\\\",\\\"status\\\":\\\"%@\\\"}",model.name,model.startTime,model.interval,btd([model.repeat UTF8String]),model.status];
-        [stringM appendString:string];
-        if (i < models.clockModelArr.count - 1) {
-            [stringM appendString:@","];
-        }
-    }
-    NSLog(@"手环闹钟---->>>%@",stringM);
-    NSString *url =[NSString stringWithFormat:@"%@fcgi-bin/platform/bin/rest.fcgi",weburl];
-    NSLog(@"botherStart: %@",models.tagetModelObj.botherStart);
-    NSLog(@"endTimeStart: %@",models.tagetModelObj.endTime);
-    NSLog(@"botherStart: %@",models.tagetModelObj.botherStatus);
-    
-    NSString *nsp_params =[NSString stringWithFormat:@"{\"setting\":\"{\\\"alarms\\\":[%@],\\\"fazeStartTime\\\":\\\"%@\\\",\\\"fazeEndTime\\\":\\\"%@\\\",\\\"fazeSwitch\\\":\\\"%@\\\",\\\"swithchs\\\": \\\"%u\\\",\\\"clockDaile\\\":\\\"%@\\\",\\\"restarting\\\":\\\"保留字段\\\"}\",\"options\":\"3\"}",stringM,models.tagetModelObj.botherStart,models.tagetModelObj.botherEnd,models.tagetModelObj.botherStatus,sss.switchsS,models.setStatusObj.clockDaile];
-    string ss = encrypt::AESEncode([nsp_params UTF8String],AES_SERVICE_KEY,AES_SERVICE_IV);
-    NSString *base64String=  [NSString stringWithCString:ss.c_str() encoding:[NSString defaultCStringEncoding]];
-    [request startRequestWithType:@"POST" withUrl:url withInfo:@{
-                                                                 @"nsp_svc":@"1",
-                                                                 @"access_token":token,
-                                                                 @"nsp_params":base64String,
-                                                                 @"nsp_ts":@"",
-                                                                 @"nsp_ver":@"",
-                                                                 @"finger_print":@""
-                                                                 } isUrlEncode:YES];
-}
+//+ (void)submitUserSetting:(AllModel *)models  WithBlock:(void (^)(BOOL, id))block
+//{
+//    if (token.length==0 || !models.setStatusObj || !models.clockModelArr.count || !models.tagetModelObj) return;
+//    
+//    NetWorking *request = [[NetWorking alloc]init];
+//    request.completion = ^(id result,BOOL success){
+//        block(success,result);
+//    };
+//
+//    union switchStatus
+//    {
+//        struct{
+//            char cloudBackup:1;//一键备份
+//            char phoneAntiLost:1;//手机防丢
+//            char unlockPhone:1;//手机解锁
+//            char messageRefused:1;//拒接回短信
+//            char contactsReceiveOnly:1;//仅接收通讯录
+//            char searchPhone:1;        //手机查找
+//            char TwitterSwitch:1;
+//            char FaceBookSwitch:1;
+//            char WhatsappSwitch:1;
+//            char weatherSwitch:1;
+//            char batteryAlertSwitch:1;  //电量推送
+//            char wecatSwitch:1;
+//            char callSwitch:1;
+//            char smsSwitch:1;
+//        }switchs;
+//        unsigned int switchsS;
+//    }sss;
+//    memset(&sss, 0, sizeof(sss));
+//    sss.switchs.smsSwitch = *(char *)[models.setStatusObj.smsStatus UTF8String];
+//    sss.switchs.callSwitch = *(char *)[models.setStatusObj.callState UTF8String];
+//    sss.switchs.wecatSwitch = *(char *)[models.setStatusObj.wecatState UTF8String];
+//    sss.switchs.batteryAlertSwitch = *(char *)[models.setStatusObj.BatteryPowerPush UTF8String];
+//    sss.switchs.weatherSwitch = *(char *)[models.setStatusObj.weatherState UTF8String];
+//    sss.switchs.WhatsappSwitch = *(char *)[models.setStatusObj.WhatsappState UTF8String];
+//    sss.switchs.FaceBookSwitch = *(char *)[models.setStatusObj.FaceBookState UTF8String];
+//    sss.switchs.TwitterSwitch = *(char *)[models.setStatusObj.TwitterState UTF8String];
+//    sss.switchs.searchPhone = *(char *)[models.setStatusObj.FindPhone UTF8String];
+//    sss.switchs.phoneAntiLost = *(char*)[models.setStatusObj.LinkLostPhone UTF8String];
+//    sss.switchs.cloudBackup = *(char *)[models.setStatusObj.ColudBackUp UTF8String];
+//    
+//    NSLog(@"推送开关状态-->>%d", sss.switchsS);
+//
+//    NSMutableString *stringM = [NSMutableString string];
+//    for (int i = 0; i < models.clockModelArr.count; i++) {
+//        t_alarmModel *model = models.clockModelArr[i];
+//        NSString *string = [NSString stringWithFormat:@"{\\\"alarmName\\\":\\\"%@\\\",\\\"alarmTime\\\":\\\"%@\\\",\\\"interval\\\":\\\"%@\\\",\\\"repeat\\\":\\\"%d\\\",\\\"status\\\":\\\"%@\\\"}",model.notification,model.startTimeMinute,model.interval_time,btd([model.days_of_week UTF8String]),model.alarm_switch];
+//        [stringM appendString:string];
+//        if (i < models.clockModelArr.count - 1) {
+//            [stringM appendString:@","];
+//        }
+//    }
+//    NSLog(@"手环闹钟---->>>%@",stringM);
+//    NSString *url =[NSString stringWithFormat:@"%@fcgi-bin/platform/bin/rest.fcgi",weburl];
+//    NSLog(@"botherStart: %@",models.tagetModelObj.botherStart);
+//    NSLog(@"endTimeStart: %@",models.tagetModelObj.endTime);
+//    NSLog(@"botherStart: %@",models.tagetModelObj.botherStatus);
+//    
+//    NSString *nsp_params =[NSString stringWithFormat:@"{\"setting\":\"{\\\"alarms\\\":[%@],\\\"fazeStartTime\\\":\\\"%@\\\",\\\"fazeEndTime\\\":\\\"%@\\\",\\\"fazeSwitch\\\":\\\"%@\\\",\\\"swithchs\\\": \\\"%u\\\",\\\"clockDaile\\\":\\\"%@\\\",\\\"restarting\\\":\\\"保留字段\\\"}\",\"options\":\"3\"}",stringM,models.tagetModelObj.botherStart,models.tagetModelObj.botherEnd,models.tagetModelObj.botherStatus,sss.switchsS,models.setStatusObj.clockDaile];
+//    string ss = encrypt::AESEncode([nsp_params UTF8String],AES_SERVICE_KEY,AES_SERVICE_IV);
+//    NSString *base64String=  [NSString stringWithCString:ss.c_str() encoding:[NSString defaultCStringEncoding]];
+//    [request startRequestWithType:@"POST" withUrl:url withInfo:@{
+//                                                                 @"nsp_svc":@"1",
+//                                                                 @"access_token":token,
+//                                                                 @"nsp_params":base64String,
+//                                                                 @"nsp_ts":@"",
+//                                                                 @"nsp_ver":@"",
+//                                                                 @"finger_print":@""
+//                                                                 } isUrlEncode:YES];
+//}
 
 + (void)getUserSettingFromServerWithBlock:(void (^)(BOOL, id))block
 {
@@ -863,8 +855,7 @@ int btd(const char *s)
 //            NSString *str = [NSString stringWithFormat:@"%@",data];
 //            NSLog(@"---Star:%@",str);
 //        }
-    }];
-    
+    }];    
 }
 
 + (void)getUserImage:(void (^)(id))complete

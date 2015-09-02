@@ -9,14 +9,12 @@
 #import "EditClockController.h"
 #import "ClockViewController.h"
 #import "SendCommandToPeripheral.h"
-#import "alarm_Model.h"
-#import "alarmManage.h"
+#import "AlarmManager.h"
 #import "XlabTools.h"
 #import "FitDataSet_Model.h"
 #import "FitDataType_Model.h"
 #import "FitDataPoint_Model.h"
 #import "SSOTest.h"
-#import "alarm_Model.h"
 
 
 typedef void(^PickerviewSelectValue) (NSString* values);
@@ -84,10 +82,8 @@ typedef void(^PickerviewSelectValue) (NSString* values);
     }
     [self setupData];
     [self creatView];
-
     
 }
-
 - (void)creatView
 {
     if (self.isEditType) {
@@ -596,89 +592,54 @@ typedef void(^PickerviewSelectValue) (NSString* values);
      *  @param alerTitle          提醒事项
      */
     
-    if (self.isEditType){//编辑闹钟
+    if (self.isEditType)
+    {//编辑闹钟
         currentModel.startTimeMinute = [NSString stringWithFormat:@"%i",hour*60 + min];
         currentModel.days_of_week = [NSString stringWithFormat:@"%i",dayofweek];
         currentModel.interval_time = intervalValue;
         currentModel.from_device = @"0";
-        [alarmManage updateModel:currentModel ByModelId:currentModel.Id];
+        [AlarmManager insertOrUpdateAlarmData:currentModel];
         
-    }else//添加闹钟
+    }
+    else//添加闹钟
     {
-        alarmId = [alarmManage getLastAlarmId];
+        alarmId = [AlarmManager getMaxAlarmId];
         alarmId++;
-        currentModel.Id = [NSString stringWithFormat:@"%d",alarmId];
-        currentModel.userid = [Singleton getValueWithKey:@"open_id"];
+        
+#warning modeify WD
+//修改by Star
+//        alarmId = [alarmManage getLastAlarmId];
+//        alarmId++;
+        currentModel.alarmId = [NSString stringWithFormat:@"%d",alarmId];
+        currentModel.userid = [Singleton getUserID];
+        currentModel.mac = [Singleton getMacSite];
+        currentModel.from_device = @"0";
         currentModel.repeat_switch = repeatBtnStatus;
         currentModel.interval_switch = [NSString stringWithFormat:@"%d",[intervalSwitchBtn isSelected]];
-        currentModel.interval_time = intervalValue;
-        currentModel.status = @"1";
-        
+        if (intervalValue) {
+             currentModel.interval_time = intervalValue;
+        }
+        else
+        {
+            currentModel.interval_time = @"0";
+        }
+        currentModel.alarm_switch = @"1";
+        [AlarmManager insertNewAlarm:currentModel];
         [alermInformation alermRemind:hour alarmMin:min repeat:[self.currentModel.days_of_week integerValue] isopen:1 interval:[intervalValue intValue] capacityAlarm:1 title:currentModel.notification];
-        
-        [alarmManage addDataToDB:currentModel];
-        
-        FitField_Model *alarmID = [[FitField_Model alloc] init];
-        alarmID.name = @"alarmID";
-        alarmID.format = 2;
-        
-        FitField_Model *alarmHour = [[FitField_Model alloc] init];
-        alarmHour.name = @"alarmHour";
-        alarmHour.format = 2;
-        
-        FitField_Model *alarmMin = [[FitField_Model alloc] init];
-        alarmMin.name = @"alarmMin";
-        alarmMin.format = 2;
-        
-        FitField_Model *alarmRepeat = [[FitField_Model alloc] init];
-        alarmRepeat.name = @"alarmRepeat";
-        alarmRepeat.format = 2;
-        
-        FitField_Model *alarmInterval = [[FitField_Model alloc] init];
-        alarmInterval.name = @"alarmInterval";
-        alarmInterval.format = 2;
-        
-        FitField_Model *alarmContent = [[FitField_Model alloc] init];
-        alarmContent.name = @"alarmContent";
-        alarmContent.format = 2;
-        
-        FitField_Model *alarmDevice = [[FitField_Model alloc] init];
-        alarmDevice.name = @"alarmDevice";
-        alarmDevice.format = 2;
-        
-        FitField_Model *alarmSwitch = [[FitField_Model alloc] init];
-        alarmSwitch.name = @"alarmSwitch";
-        alarmSwitch.format = 2;
-        
-        FitField_Model *alarmIntervalTime = [[FitField_Model alloc] init];
-        alarmIntervalTime.name = @"alarmIntervalTime";
-        alarmIntervalTime.format = 2;
-
-        FitDataType_Model *typeModel = [[FitDataType_Model alloc]init];
-        typeModel.name = @"com.lenovo.appdemo.userAlarm";
-        typeModel.fitfields = [@[alarmID,alarmHour,alarmMin,alarmRepeat,alarmInterval,alarmContent,alarmDevice,alarmSwitch,alarmIntervalTime]mutableCopy];
-        
-        [HTTPManage createCustomFitDataTypeWithFitDataTypeModel:typeModel Withblock:^(NSData *result, NSError *error) {
-           
-            if (result.length) {
-                NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:result options:NSJSONReadingMutableContainers error:nil];
-                NSLog(@"自定義成功：%@",dict);
-
-                [self uploadFitDataSet];
-                
-            }
-        }];
     }
     
     NSArray *arrayControllers = self.navigationController.viewControllers;
     BOOL hasPushed = NO;
-    for (UIViewController *viewController in arrayControllers) {
-        if ([viewController isKindOfClass:[ClockViewController class]]) {
+    for (UIViewController *viewController in arrayControllers)
+    {
+        if ([viewController isKindOfClass:[ClockViewController class]])
+        {
             hasPushed = YES;
             [self.navigationController popToViewController:viewController animated:NO];
         }
     }
-    if (!hasPushed) {
+    if (!hasPushed)
+    {
         [self.navigationController pushViewController:[ClockViewController new] animated:NO];
     }
     
@@ -686,7 +647,8 @@ typedef void(^PickerviewSelectValue) (NSString* values);
 
 
 
--(void)uploadFitDataSet{
+-(void)uploadFitDataSet
+    {
     FitDataSet_Model *setModel = [[FitDataSet_Model alloc]init];
     setModel.nextPageIndex = @"1";
     setModel.minStartTime = 1436151478;
@@ -754,7 +716,7 @@ typedef void(^PickerviewSelectValue) (NSString* values);
     NSMutableArray *array = [[NSMutableArray alloc]init];
     [array addObject:point1];
     
-    for (alarm_Model *alarm in alarmArray) {
+    for (t_alarmModel *alarm in alarmArray) {
      
         FitDataPoint_Model *point2 = [[FitDataPoint_Model alloc]init];
         point2.fitDataSourceId = [[Singleton getValueWithKey:@"fitDataSourceId"]intValue];
@@ -763,7 +725,7 @@ typedef void(^PickerviewSelectValue) (NSString* values);
         point2.entTime = 1436151500;
         
         FitValue_Model *fit1 = [[FitValue_Model alloc]init];
-        fit1.value = alarm.Id;
+        fit1.value = alarm.alarmId;
         fit1.format = 2;
         
         FitValue_Model *fit2 = [[FitValue_Model alloc]init];
@@ -791,7 +753,7 @@ typedef void(^PickerviewSelectValue) (NSString* values);
         fit7.format =2;
         
         FitValue_Model *fit8 = [[FitValue_Model alloc]init];
-        fit8.value = alarm.status;
+        fit8.value = alarm.alarm_switch;
         fit8.format =2;
         
         FitValue_Model *fit9 = [[FitValue_Model alloc]init];
@@ -826,6 +788,7 @@ typedef void(^PickerviewSelectValue) (NSString* values);
     btn.selected = !btn.selected;
     [_tipsTextField resignFirstResponder];
     intervalBtnStatus = [NSString stringWithFormat:@"%d",intervalSwitchBtn.selected];
+    currentModel.interval_switch = intervalBtnStatus;
     [_tableView reloadData];
     
 }
@@ -865,8 +828,24 @@ typedef void(^PickerviewSelectValue) (NSString* values);
 
 - (void)setupData
 {
-    if (currentModel == nil) {
-        currentModel = [[alarm_Model alloc]init];
+    //首先初始化一个和UI一致的model
+    NSDictionary *initDic = @{@"userid":[Singleton getUserID],
+                              @"mac":[Singleton getMacSite],
+                              @"alarmId":[NSString stringWithFormat:@"%d",[AlarmManager getMaxAlarmId]],
+                              @"from_device":@"0",
+                              @"startTimeMinute":@"0",
+                              @"days_of_week":@"0",
+                              @"interval_time":@"0",
+                              @"notification":@"",
+                              @"repeat_switch":@"0",
+                              @"interval_switch":@"0",
+                              @"alarm_switch":@"0"};
+    if (self.currentModel) {
+        currentModel = self.currentModel;
+    }
+    else if (currentModel == nil)
+    {
+        currentModel = [t_alarmModel convertDataToModel:initDic];
     }
     repeatBtnStatus = self.currentModel.repeat_switch;
     intervalBtnStatus = self.currentModel.interval_switch;

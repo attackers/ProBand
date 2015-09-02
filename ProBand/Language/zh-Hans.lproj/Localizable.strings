@@ -114,7 +114,7 @@
 "electronic_cash_amount" = "电子现金金额";
 "my_bank_card" = "我的银行卡";
 "band_transactions" = "手环交易记录";
-"bank_card_set" = "银行卡设置";
+"bank_card_set" = "通用设置";
 //睡眠
 "sleep" = "睡眠";
 "sleep_time" = "睡眠时间";

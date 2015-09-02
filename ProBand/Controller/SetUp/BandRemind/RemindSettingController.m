@@ -38,9 +38,6 @@
     _tableView.backgroundColor = COLOR(223, 234, 235);
     [self addTableFootView];
     
-    BLEManage *bM = [BLEManage shareCentralManager];
-
-
 }
 - (void)addTableFootView
 {

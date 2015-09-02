@@ -106,6 +106,9 @@
         case 26://获取电量
         {
             string = [NSString stringWithFormat:@"%02x", byte[7]];
+            if (_eValue) {
+                _eValue([string floatValue]);
+            }
             
         }
             break;
@@ -118,9 +121,7 @@
         }
         case 29://历史数据
         {
-            //            string = [NSString stringWithFormat:@"%02x", byte[3]];
-            //            int comType = [string intValue];
-            //            [self personalDataType:comType Data:data];
+
             HistoryDataInfomation *his = [HistoryDataInfomation shareHistoryDataInfomation];
             if (his.bandHistoryData) {
                 his.bandHistoryData(data);
@@ -194,21 +195,7 @@
 }
 - (void)getvoice:(NSData*)data
 {
-    //
     NSData *subData = [data subdataWithRange:NSMakeRange(4, 16)];
-    //    NSArray *pathArray = NSSearchPathForDirectoriesInDomains(NSDocumentationDirectory, NSUserDomainMask, YES);
-    //    NSString *documentsDiretory = [pathArray objectAtIndex:0];
-    //    NSString *path = [documentsDiretory stringByAppendingString:@"/Documentation/VoiceSpeex.dat"];
-    //    NSFileManager *manage = [[NSFileManager alloc]init];
-    //    if (![manage fileExistsAtPath:path]) {
-    //
-    //        [manage createFileAtPath:path contents:nil attributes:nil];
-    //    }
-    //    NSFileHandle *fileHandle = [NSFileHandle fileHandleForUpdatingAtPath:path];
-    //
-    //    [fileHandle seekToEndOfFile];
-    //    [fileHandle writeData:subData];
-    //    [fileHandle closeFile];
     [voiceData appendData:subData];
     
 }
@@ -358,5 +345,14 @@
     UInt32 n = ((bytes[0]&0xFF)<<24) | (((bytes[1]>>8)&0xFF)<<16) | (((bytes[2]>>16)&0xFF)<<8) | ((bytes[3] >>24)&0xFF);
     return n;
 }
+#pragma mark ****************************获取电量*****************************
+- (void)returnElectricValue:(ElectricValue)value
+{
+    _eValue = ^(CGFloat f){
+    
+        value(f);
+    
+    };
 
+}
 @end

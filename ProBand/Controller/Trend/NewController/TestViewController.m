@@ -15,7 +15,9 @@
 #import "SleepDataManager.h"
 #import "DailyDataManager.h"
 #import "ExerciseDataManager.h"
-@interface TestViewController ()<EColumnChartDelegate,EColumnChartDataSource,FMDBDataDelegate>
+
+#import "CAShawRoundView.h"
+@interface TestViewController ()<EColumnChartDelegate,EColumnChartDataSource>
 {
     NSMutableArray *_data;
     UIScrollView *scrollView;
@@ -27,122 +29,102 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.view.backgroundColor = [UIColor yellowColor];
+    self.view.backgroundColor = [UIColor lightGrayColor];
     scrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
     scrollView.contentSize  = CGSizeMake(SCREEN_WIDTH, SCREEN_HEIGHT *3);
     [self.view addSubview:scrollView];
 
-    
-//    DetailChartView *chart1 = [[DetailChartView alloc]initWithFrame:CGRectMake(30, 40, 250, 200)];
-//    [chart1 drawChartViewWithDateArray:@[@"3月",@"4月",@"5月",@"6月"] valueArray:@[@20.0,@50.0,@30.0,@100.0] pillarWidth:50.0 spaceWidth:5.0 columnLabelType:1 chartColor:[UIColor greenColor]];
-//    [scrollView addSubview:chart1];
+    CAShawRoundView *round = [[CAShawRoundView alloc]initWithFrame:CGRectMake(0, 70, CGRectGetWidth(self.view.frame), 265)];
+    round.contentMode = UIViewContentModeRedraw;
+    CGFloat v = 0.5;
+    round.value = v;
+    [round setpercent:v*10 animated:YES];
+    [self.view addSubview:round];
+//    NSString *date = @"2015-06-30";
+//    NSString *date2 = [DateHandle getTomorrowAndYesterDayByCurrentDate:date byIndex:2 withType:@"yyyy-MM-dd"];
+//    NSLog(@"新的日期结果为：%@",date2);
+//    NSDate *date8 = [DateHandle stringToDate:@"2015-04-01" withtype:2];
+//    NSDate *date10 = [NSDate dateWithTimeInterval:10000 sinceDate:date8];
+//    //当前时间与本地时间一致,该时间点也是正确的
+//    //NSDate *date9 = [NSDate date];
+//    NSInteger a = [DateHandle getTimeFromDate:date10 withType:0];
+//    NSInteger b = [DateHandle getTimeFromDate:date10 withType:1];
+//    NSInteger c = [DateHandle getTimeFromDate:date10 withType:2];
+//    NSInteger d = [DateHandle getTimeFromDate:date10 withType:3];
+//    NSInteger e = [DateHandle getTimeFromDate:date10 withType:4];
+//    NSInteger f = [DateHandle getTimeFromDate:date10 withType:5];
+//    //是他的实际时间.但是NSDate显示的是UTC时间,如果是UTC时间要将小时加8
+//    NSLog(@"获取到时间为%d-%d-%d-%d-%d-%d",a,b,c,d,e,f);
 //    
-//    DetailChartView *detailChart = [[DetailChartView alloc]initWithFrame:CGRectMake(30, 240, 250, 200)];
-//    [detailChart drawUnpureChartViewWithDateArray:@[@"6-25",@"6-26",@"6-27",@"6-28"] valueArray:@[@[@0.1,@3.4,@0.5],@[@0.4,@2.4,@0.2],@[@0.3,@0.4,@0.7],@[@1,@0.6,@0.3]] colorArray:@[[UIColor redColor],[UIColor blueColor],[UIColor greenColor]] pillarWidths:@[@30.0,@20.0,@50.0,@80.0] spaceWidths:@[@5.0,@10.0,@20.0,@5.0] columnLabelType:2];
-//    [scrollView addSubview:detailChart];
 //    
-//    DetailChartView *chart3 = [[DetailChartView alloc]initWithFrame:CGRectMake(30, 500, 250, 200)];
-//    [chart3 drawColorfulChartWithDateArray:@[@"周一",@"周二",@"周三",@"周四"] valueArray:@[@[@20.0,@30.0,@10.0],@[@10.0,@10.0,@10.0],@[@40.0,@30.0,@10.0],@[@20.0,@60.0,@10.0]] colorArray:@[[UIColor redColor],[UIColor blueColor],[UIColor greenColor]] pillarWidth:50.0 spaceWidth:5.0 columnLabelType:0];
-//    [scrollView addSubview:chart3];
+//    UIButton *stepBn1 = [[UIButton alloc]initWithFrame:CGRectMake(20, 70, 120, 30)];
+//    [stepBn1 setTitle:@"插入计步数据" forState:UIControlStateNormal];
+//    [stepBn1 setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+//    [stepBn1 addTarget:self action:@selector(insertStepTestData:) forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:stepBn1];
+//    //添加一个按钮增加到汇总表的方法
+//    UIButton *stepBn = [[UIButton alloc]initWithFrame:CGRectMake(200, 70, 120, 30)];
+//    [stepBn setTitle:@"计步数据汇总" forState:UIControlStateNormal];
+//    [stepBn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+//    [stepBn addTarget:self action:@selector(collectStepData:) forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:stepBn];
 //    
-//    DetailChartView *chart4 = [[DetailChartView alloc]initWithFrame:CGRectMake(30, 750, 250, 200)];
-//    [chart4 drawUnQualblyChartWithDateArray:@[@"周一",@"周二",@"周三",@"周四"] valueArray:@[@20.0,@50.0,@30.0,@100.0] pillarWidths:@[@30.0,@20.0,@50.0,@80.0] spaceWidths:@[@5.0,@10.0,@20.0,@5.0] columnLabelType:0 chartColor:[UIColor greenColor]];
-//    [scrollView addSubview:chart4];
+//    UIButton *exerciseBn1 = [[UIButton alloc]initWithFrame:CGRectMake(20, 120, 120, 30)];
+//    [exerciseBn1 setTitle:@"插入锻炼数据" forState:UIControlStateNormal];
+//    [exerciseBn1 setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+//    [exerciseBn1 addTarget:self action:@selector(insertExerciseTestData:) forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:exerciseBn1];
+//    UIButton *exerciseBn = [[UIButton alloc]initWithFrame:CGRectMake(200, 120, 120, 30)];
+//    [exerciseBn setTitle:@"锻炼数据汇总" forState:UIControlStateNormal];
+//    [exerciseBn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+//    [exerciseBn addTarget:self action:@selector(collectExerciseData:) forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:exerciseBn];
 //    
-//    DetailChartView *chart5 = [[DetailChartView alloc]initWithFrame:CGRectMake(30, 1000, 250, 200)];
-//    [chart5 drawDifferentColorColumnChartWithDateArray:@[@"周一",@"周二",@"周三",@"周四"] valueArray:@[@20.0,@50.0,@30.0,@100.0] columnColorArray:@[[UIColor redColor],[UIColor greenColor],[UIColor blueColor],[UIColor lightGrayColor]] pillarWidths:@[@30.0,@20.0,@50.0,@80.0] spaceWidths:@[@5.0,@10.0,@20.0,@5.0] columnLabelType:0];
-//    [scrollView addSubview:chart5];
+//    UIButton *sleepBn1 = [[UIButton alloc]initWithFrame:CGRectMake(20, 170, 120, 30)];
+//    [sleepBn1 setTitle:@"插入睡眠数据" forState:UIControlStateNormal];
+//    [sleepBn1 setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+//    [sleepBn1 addTarget:self action:@selector(insertSleepTestData:) forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:sleepBn1];
+//    UIButton *sleepBn = [[UIButton alloc]initWithFrame:CGRectMake(200, 170, 120, 30)];
+//    [sleepBn setTitle:@"睡眠数据汇总" forState:UIControlStateNormal];
+//    [sleepBn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+//    [sleepBn addTarget:self action:@selector(collectSleepData:) forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:sleepBn];
+//    
+//    NSArray *fonts = [UIFont familyNames];
+//    NSLog(@"字体总数为%d",fonts.count);
+//    for (NSString *font in fonts) {
+//        NSLog(@"字体名为：%@",font);
+//    }
+//    UIFont *font1 = [UIFont fontWithName:APP_FONT_BASE size:40];
+//    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(10, 220, 300, 40)];
+//    label.textColor = [UIColor redColor];
+//    label.text  =@"adhnfd";
+//    label.font = font1;
+//    [self.view addSubview:label];
+//    UILabel *label1 = [[UILabel alloc]initWithFrame:CGRectMake(160, 270, 300, 40)];
+//    label1.textColor = [UIColor redColor];
+//    label1.text  =@"adhnfda";
+//    label1.font = [UIFont fontWithName:APP_FONT_THIN size:40];
+//    [self.view addSubview:label1];
+//    //先转为时间戳再转回去，看能否生效
+//    NSDate *date6 = [DateHandle stringToDate:@"2015-04-01" withtype:2];
+//    NSTimeInterval second = [date6 timeIntervalSince1970];
+//    NSLog(@"转为时间戳后为%f---%f",second,second/3600);//second=536870912???
+//    int abc = second/(3600*24);
+//    int adf = abc*(3600*24);
+//    
+//    NSDate *date7 = [DateHandle stringToDate:@"2015-04-05" withtype:2];
+//    NSInteger aDays = [DateHandle calcDaysFromBegin:date6 end:date7];
+//    
+//    NSString *selectSql = [NSString stringWithFormat:@"SELECT * FROM t_total_sleepData where date = '%@'",@"2015-04-01"];
+//    NSArray *data = [DBOPERATOR getDataForSQL:selectSql];
+//    NSDictionary *dic = data[0];
+//    NSString *sleepStr = dic[@"sleeps"];
+//    NSArray *array = [sleepStr componentsSeparatedByString:@","];
+//    [self handleForArray:array];
     
 
-    
-    //[[FMDBTool sharedInstance] addTestData];
-    
-//    NSDictionary *dailyDic1 = @{@"mac":[Singleton getMacSite],@"time":[NSNumber numberWithLong:12345],@"steps":[NSNumber numberWithInt:180],@"meters":[NSNumber numberWithInt:(int)180*0.7],@"kCalories":[NSNumber numberWithFloat:120*1.23],@"isRead":[NSNumber numberWithInt:0]};//,@"keys":@"mac,time,steps,meters,kCalories,isUpload"
-//    [[FMDBManage shareFMDBManage] insertDataFromTable:StepDataTable insertValueDic:dailyDic1];
-    
-    NSString *date = @"2015-06-30";
-    NSString *date2 = [DateHandle getTomorrowAndYesterDayByCurrentDate:date byIndex:2 withType:@"yyyy-MM-dd"];
-    NSLog(@"新的日期结果为：%@",date2);
-    NSDate *date8 = [DateHandle stringToDate:@"2015-04-01" withtype:2];
-    NSDate *date10 = [NSDate dateWithTimeInterval:10000 sinceDate:date8];
-    //当前时间与本地时间一致,该时间点也是正确的
-    //NSDate *date9 = [NSDate date];
-    NSInteger a = [DateHandle getTimeFromDate:date10 withType:0];
-    NSInteger b = [DateHandle getTimeFromDate:date10 withType:1];
-    NSInteger c = [DateHandle getTimeFromDate:date10 withType:2];
-    NSInteger d = [DateHandle getTimeFromDate:date10 withType:3];
-    NSInteger e = [DateHandle getTimeFromDate:date10 withType:4];
-    NSInteger f = [DateHandle getTimeFromDate:date10 withType:5];
-    //是他的实际时间.但是NSDate显示的是UTC时间,如果是UTC时间要将小时加8
-    NSLog(@"获取到时间为%d-%d-%d-%d-%d-%d",a,b,c,d,e,f);
-    
-    
-    UIButton *stepBn1 = [[UIButton alloc]initWithFrame:CGRectMake(20, 70, 120, 30)];
-    [stepBn1 setTitle:@"插入计步数据" forState:UIControlStateNormal];
-    [stepBn1 setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-    [stepBn1 addTarget:self action:@selector(insertStepTestData:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:stepBn1];
-    //添加一个按钮增加到汇总表的方法
-    UIButton *stepBn = [[UIButton alloc]initWithFrame:CGRectMake(200, 70, 120, 30)];
-    [stepBn setTitle:@"计步数据汇总" forState:UIControlStateNormal];
-    [stepBn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-    [stepBn addTarget:self action:@selector(collectStepData:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:stepBn];
-    
-    UIButton *exerciseBn1 = [[UIButton alloc]initWithFrame:CGRectMake(20, 120, 120, 30)];
-    [exerciseBn1 setTitle:@"插入锻炼数据" forState:UIControlStateNormal];
-    [exerciseBn1 setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-    [exerciseBn1 addTarget:self action:@selector(insertExerciseTestData:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:exerciseBn1];
-    UIButton *exerciseBn = [[UIButton alloc]initWithFrame:CGRectMake(200, 120, 120, 30)];
-    [exerciseBn setTitle:@"锻炼数据汇总" forState:UIControlStateNormal];
-    [exerciseBn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-    [exerciseBn addTarget:self action:@selector(collectExerciseData:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:exerciseBn];
-    
-    UIButton *sleepBn1 = [[UIButton alloc]initWithFrame:CGRectMake(20, 170, 120, 30)];
-    [sleepBn1 setTitle:@"插入睡眠数据" forState:UIControlStateNormal];
-    [sleepBn1 setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-    [sleepBn1 addTarget:self action:@selector(insertSleepTestData:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:sleepBn1];
-    UIButton *sleepBn = [[UIButton alloc]initWithFrame:CGRectMake(200, 170, 120, 30)];
-    [sleepBn setTitle:@"睡眠数据汇总" forState:UIControlStateNormal];
-    [sleepBn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-    [sleepBn addTarget:self action:@selector(collectSleepData:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:sleepBn];
-    
-    NSArray *fonts = [UIFont familyNames];
-    NSLog(@"字体总数为%d",fonts.count);
-    for (NSString *font in fonts) {
-        NSLog(@"字体名为：%@",font);
-    }
-    UIFont *font1 = [UIFont fontWithName:APP_FONT_BASE size:40];
-    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(10, 220, 300, 40)];
-    label.textColor = [UIColor redColor];
-    label.text  =@"adhnfd";
-    label.font = font1;
-    [self.view addSubview:label];
-    UILabel *label1 = [[UILabel alloc]initWithFrame:CGRectMake(160, 270, 300, 40)];
-    label1.textColor = [UIColor redColor];
-    label1.text  =@"adhnfda";
-    label1.font = [UIFont fontWithName:APP_FONT_THIN size:40];
-    [self.view addSubview:label1];
-    //先转为时间戳再转回去，看能否生效
-    NSDate *date6 = [DateHandle stringToDate:@"2015-04-01" withtype:2];
-    NSTimeInterval second = [date6 timeIntervalSince1970];
-    NSLog(@"转为时间戳后为%f---%f",second,second/3600);//second=536870912???
-    int abc = second/(3600*24);
-    int adf = abc*(3600*24);
-    
-    NSDate *date7 = [DateHandle stringToDate:@"2015-04-05" withtype:2];
-    NSInteger aDays = [DateHandle calcDaysFromBegin:date6 end:date7];
-    
-    NSString *selectSql = [NSString stringWithFormat:@"SELECT * FROM t_total_sleepData where date = '%@'",@"2015-04-01"];
-    NSArray *data = [DBOPERATOR getDataForSQL:selectSql];
-    NSDictionary *dic = data[0];
-    NSString *sleepStr = dic[@"sleeps"];
-    NSArray *array = [sleepStr componentsSeparatedByString:@","];
-    [self handleForArray:array];
        // Do any additional setup after loading the view.
 }
 - (void)requestDelegateData:(NSMutableArray *)fSetArray

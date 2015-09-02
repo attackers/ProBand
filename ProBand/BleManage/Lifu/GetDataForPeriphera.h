@@ -19,12 +19,19 @@ typedef void(^MyAlarmList) (NSMutableArray* alermArray);
  */
 typedef void(^VoiceData) (NSMutableData *voData);
 /**
+ *  传递电量值
+ *
+ *  @param fValue 电量值
+ */
+typedef void(^ElectricValue) (CGFloat fValue);
+/**
  *  主要用来接收手环发送过来的数据
  */
 @interface GetDataForPeriphera : NSObject
 @property (nonatomic,strong)AVAudioPlayer *audioPlay;
 @property (nonatomic,copy)MyAlarmList alarmArray;
 @property (nonatomic,copy)VoiceData voiceDataForBand;
+@property (nonatomic,copy)ElectricValue eValue;
 /**
  * 初始化单例
  *
@@ -43,4 +50,5 @@ typedef void(^VoiceData) (NSMutableData *voData);
  *  @param vData 传输的语音数据
  */
 - (void)returnVoiceData:(VoiceData)vData;
+- (void)returnElectricValue:(ElectricValue)value;
 @end

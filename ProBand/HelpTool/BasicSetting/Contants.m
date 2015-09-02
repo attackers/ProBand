@@ -8,8 +8,6 @@
 
 #import "Contants.h"
 #import "UIImageView+WebCache.h"
-#import "UserTargetModel.h"
-#import "UserInfoModel.h"
 @implementation Contants
 /**
  *  是否显示状态栏
@@ -328,7 +326,7 @@
         NSString *insertSql = [NSString stringWithFormat: @"insert into t_targetInfo(userid,stepTarget,startTime,endTime,sleepTarget,botherStart,botherEnd,botherStatus) values('%@','%@','%@','%@','%@','%@','%@','%@')",[Singleton getUserID],@"10000",@"23:00",@"07:00",@"480",@"23:00",@"07:00",@"0"];
         [DBOPERATOR insertDataToSQL:insertSql withExsitSql:tagetSql];
         //保存默认目标值到单列
-        [UserTargetModel setUserTargetInfo];
+        //[UserTargetModel setUserTargetInfo];
         
         
      
@@ -336,7 +334,7 @@
         NSString *userInsertSql = [NSString stringWithFormat: @"insert into t_userInfo(userId,userName,height,weight,gender,birthDay,weightUnit,heightUnit,imageUrl) values('%@','%@','%@','%@','%@','%@','%@','%@','%@')",[Singleton getUserID],NSLocalizedString(@"NickName", nil),@"168",@"60",@"1",@"1984-1-7",@"kg",@"cm",@""];
         [DBOPERATOR insertDataToSQL:userInsertSql withExsitSql:userInfoStr];
         //保存默认用户信息值到单列
-        [UserInfoModel setUserInfo];
+        //[UserInfoModel setUserInfo];
         [Singleton setValues:@"0" withKey:@"heightFormat"];
         [Singleton setValues:@"0" withKey:@"weightFormat"];
         

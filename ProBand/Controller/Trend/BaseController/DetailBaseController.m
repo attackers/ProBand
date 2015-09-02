@@ -30,7 +30,7 @@
 - (void)setControllerWithTitle:(NSString *)title UpDescribeArray:(NSArray *)array1 downDescribeArray:(NSArray *)array2 upValueArray:(NSArray *)valueArray1 downValueArray:(NSArray *)valueArray2
 {
     UIButton *btnLeft=[PublicFunction getButtonInControl:self frame:CGRectMake(0, 4, 32, 32) imageName:@"return" title:@"" clickAction:@selector(goBack:)];
-    UIButton *btnRight=[PublicFunction getButtonInControl:self frame:CGRectMake(SCREEN_WIDTH-40, 0, 32, 32) imageName:@"share_invalid.png" title:@"" clickAction:@selector(share:)];
+    UIButton *btnRight=[PublicFunction getButtonInControl:self frame:CGRectMake(SCREEN_WIDTH-40, 0, 32, 32) imageName:@"share.png" title:@"" clickAction:@selector(share:)];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:btnRight];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:btnLeft];
     //self.navigationController.navigationBar.alpha = 0;

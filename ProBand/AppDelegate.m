@@ -39,14 +39,14 @@
     [[LenovoShareSdk sharedInstance] initData];
     /********** 蓝牙相关初始 ***************/
     [self getLocation];
-    [BLEManage shareCentralManager];
+//    [BLEManage shareCentralManager];
     [GetDataForPeriphera shareDataForPeriphera];
     /*************************************/
     [DBOPERATOR checkUserDatabase];
 //    if ([[NSUserDefaults standardUserDefaults]objectForKey:@"isFirstOpen"]) 
     if ([[NSUserDefaults standardUserDefaults]objectForKey:@"isFirstOpen"]) {
         NSLog(@"--------->>>%@",NSHomeDirectory());
-        if (![[NSUserDefaults standardUserDefaults] objectForKey:@"defaultBand"]) {
+        if (![[NSUserDefaults standardUserDefaults] objectForKey:[Singleton getUserID]]) {
             
             BlueToothTestViewController *b = [[BlueToothTestViewController alloc]init];
             _navi = [[UINavigationController alloc]initWithRootViewController:b];
@@ -56,17 +56,9 @@
             
         }else{
             [self pushHomeViewController];
-        }
-        //    [[FMDBTool sharedInstance]createDefaultTable];
-        //    if ([AssisitTool isFirstEnterApp]) {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            //[[FMDBTool sharedInstance]addTestData];
-        });
-        
-        //    NSString *isStarted=[DefaultValueManage getValueForKey:@"isStarted"];
+        }        
         
     }else{
-        
         GuidePageViewController *g = [GuidePageViewController shareGuidePageViewController:[NSArray arrayWithObjects:@"welcome_page_2",@"welcome_page_3",@"welcome_page_1",nil]];
         _navi = [[UINavigationController alloc]initWithRootViewController:g];
         [_navi setNavigationBarHidden:YES];
@@ -94,7 +86,7 @@
 - (void)insertDefaultInfo
 {
     [[BandRemindManager sharedInstance]insertDefaultSwitch];
-    [[TargetInfoManager sharedInstance]insertDefaultTarget];
+    [TargetInfoManager insertDefaultTarget];
 }
 -(void)pushHomeViewController
 {

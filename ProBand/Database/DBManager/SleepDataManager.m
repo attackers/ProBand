@@ -153,7 +153,7 @@ SINGLETON_SYNTHE
                     }
                     else//不存在则插入该数据:只插入了一次
                     {
-                        [[FMDBManage shareFMDBManage]insertDataFromTable:SleepTotalTable insertValueDic:totalDic];
+                        [DBMANAGER insertSingleDataToDB:SleepTotalTable withDictionary:totalDic];
                     }
                 }
             }

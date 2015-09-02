@@ -25,9 +25,12 @@
 #pragma mark ****************************** 日程信息 *****************************************
 @interface ScheduleSyncInformation:SendCommandToPeripheral
 /**
- *  同步日程
+ *  日程推送
+ *
+ *  @param timeIn  时间戳
+ *  @param content 事件内容
  */
-- (void)scheduleSync;
+- (void)scheduleSync:(NSTimeInterval)timeIn  content:(NSString*)content;
 /**
  *  日程提醒开
  */
@@ -198,8 +201,8 @@
 - (void)dailyPattern;
 - (void)TrainPattern;
 @end
-#pragma mark ****************************** 个人目标 **************************************
 
+#pragma mark ****************************** 个人目标 **************************************
 @interface PersonalGoalsRequest:SendCommandToPeripheral
 /**
  *  运动目标
@@ -239,35 +242,27 @@
 - (void)sendTrainGoals:(UInt8)type Duration:(UInt32)duration Distance:(UInt32)distance;
 @end
 
-#pragma mark ****************************** 个人信息 **************************************
-
-@interface UserInfoMation:SendCommandToPeripheral
+#pragma mark ****************************** 用户信息 **************************************
+@interface UserInfomation:SendCommandToPeripheral
 /**
- *  发送用户信息
+ *  用户信息
  *
  *  @param age    年龄
  *  @param gender 性别
- *  @param high   身高
+ *  @param height 身高
  *  @param weight 体重
  *  @param name   名字
  */
-- (void)sendUserInfoMation:(UInt8)age Gender:(UInt8)gender High:(UInt8)high Weight:(UInt8)weight Name:(NSString*)name;
+- (void)sendUserInfomationToBand:(UInt8)age Gender:(UInt8)gender Height:(UInt8)height Weight:(UInt8)weight Name:(NSString*)name;
 @end
-
 #pragma mark ****************************** 历史数据 **************************************
 @interface HistoryData:SendCommandToPeripheral
 /**
- *  获取历史数据;接收历史数据类是HistoryDataInfomation
+ *  获取历史数据
  */
 - (void)getHostoryDataRequest;
 /**
  *  命令手环清除历史数据
  */
 - (void)SendCommandDeleteHostoryData;
-@end
-
-#pragma mark ****************************** OTA升级 **************************************
-@interface OTAUpgradeManager:SendCommandToPeripheral
-- (void)NoticeBandUpgrade;
-- (void)sendUpgradeBox;
 @end

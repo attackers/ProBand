@@ -10,15 +10,30 @@
 #import "SettingStatusUnit.h"
 #import "UserTargetUnit.h"
 #import "ClockUnit.h"
-
+#import "AlarmManager.h"
 @implementation AllModelUnit
 
 + (AllModel *)getAllModel
 {
     AllModel *allModel = [AllModel new];
     allModel.setStatusObj = [SettingStatusUnit getSettingStatusData];
-    allModel.clockModelArr = [ClockUnit getClockModel];
-    allModel.tagetModelObj = [UserTargetUnit getUserTargetInfoObj];
+    
+    NSMutableArray *alarmArray = [NSMutableArray new];
+    NSArray *temArray = [AlarmManager getAlarmDicFromDB];
+    if ([temArray count]>0)
+    {
+        [temArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            t_alarmModel *alarmModel = [t_alarmModel convertDataToModel:obj];
+            [alarmArray addObject:alarmModel];
+        }];
+    }
+    
+    allModel.clockModelArr = alarmArray;
+    
+    
+    
+    
+    //allModel.tagetModelObj = [UserTargetUnit getUserTargetInfoObj];
     return allModel;
 }
 

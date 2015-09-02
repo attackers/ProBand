@@ -33,36 +33,36 @@
 
 
 
-/*对数据库操作*/
-+(UserInfoModel *)getUserInfoData:(NSString *)userID
-{
-
-    NSString *sqlStr = [NSString stringWithFormat:@"select * from t_userInfo where userId = '%@'",userID];
-    NSArray *userArr = [DBOPERATOR getDataForSQL:sqlStr];
-    if (userArr.count > 0) {
-        
-        return [UserInfoModel convertDataToModel:userArr[0]];
-    }
-    else
-    {
-        return nil;
-    }
-}
-+(void)saveUserInfo:(UserInfoModel *)obj
-{
-    if (!obj.userName) {
-        
-        obj.userName = @"账号昵称";
-    }
-    if (!obj.userId) {
-        
-        obj.userId = [Singleton getUserID];
-    }
-    NSString *sqlStr = [NSString stringWithFormat:@"INSERT INTO t_userInfo (userId,userName,gender,birthDay,height,weight,imageUrl,heightUnit,weightUnit) VALUES ('%@','%@','%@','%@','%@','%@','%@','%@','%@')",obj.userId,obj.userName,obj.gender,obj.birthDay,obj.height,obj.weight,obj.imageUrl,obj.heightUnit,obj.weightUnit];
-    NSString *sqlUpdate = [NSString stringWithFormat:@"UPDATE t_userInfo SET userName = '%@',gender ='%@', birthDay = '%@', height = '%@', weight = '%@', imageUrl = '%@',heightUnit = '%@',weightUnit = '%@' where userId ='%@'",obj.userName,obj.gender,obj.birthDay,obj.height,obj.weight,obj.imageUrl,obj.heightUnit,obj.weightUnit,obj.userId];
-    NSString *selectSql = [NSString stringWithFormat:@"select * from t_userInfo where userId = '%@'",obj.userId];
-    [DBOPERATOR insertDataToSQL:sqlStr updatesql:sqlUpdate withExsitSql:selectSql];
-    [UserInfoModel setUserInfo];
-}
+///*对数据库操作*/
+//+(UserInfoModel *)getUserInfoData:(NSString *)userID
+//{
+//
+//    NSString *sqlStr = [NSString stringWithFormat:@"select * from t_userInfo where userId = '%@'",userID];
+//    NSArray *userArr = [DBOPERATOR getDataForSQL:sqlStr];
+//    if (userArr.count > 0) {
+//        
+//        return [UserInfoModel convertDataToModel:userArr[0]];
+//    }
+//    else
+//    {
+//        return nil;
+//    }
+//}
+//+(void)saveUserInfo:(UserInfoModel *)obj
+//{
+//    if (!obj.userName) {
+//        
+//        obj.userName = @"账号昵称";
+//    }
+//    if (!obj.userId) {
+//        
+//        obj.userId = [Singleton getUserID];
+//    }
+//    NSString *sqlStr = [NSString stringWithFormat:@"INSERT INTO t_userInfo (userId,userName,gender,birthDay,height,weight,imageUrl,heightUnit,weightUnit) VALUES ('%@','%@','%@','%@','%@','%@','%@','%@','%@')",obj.userId,obj.userName,obj.gender,obj.birthDay,obj.height,obj.weight,obj.imageUrl,obj.heightUnit,obj.weightUnit];
+//    NSString *sqlUpdate = [NSString stringWithFormat:@"UPDATE t_userInfo SET userName = '%@',gender ='%@', birthDay = '%@', height = '%@', weight = '%@', imageUrl = '%@',heightUnit = '%@',weightUnit = '%@' where userId ='%@'",obj.userName,obj.gender,obj.birthDay,obj.height,obj.weight,obj.imageUrl,obj.heightUnit,obj.weightUnit,obj.userId];
+//    NSString *selectSql = [NSString stringWithFormat:@"select * from t_userInfo where userId = '%@'",obj.userId];
+//    [DBOPERATOR insertDataToSQL:sqlStr updatesql:sqlUpdate withExsitSql:selectSql];
+//    [UserInfoModel setUserInfo];
+//}
 
 @end

@@ -7,7 +7,6 @@
 //
 
 #import "UserTargetUnit.h"
-#import "UserTargetModel.h"
 
 @implementation UserTargetUnit
 
@@ -32,35 +31,35 @@
     }
 }
 
-+(UserTargetModel *)getUserTargetInfoObj
-{
-    
-    NSString *selectSql = [NSString stringWithFormat:@"select * from t_targetInfo where userid = '%@'",[Singleton getUserID]];
-    NSArray *tarGetArr = [DBOPERATOR getDataForSQL:selectSql];
-    if (tarGetArr.count ==0) {
-        return [UserTargetModel new];
-    }
-    UserTargetModel *tarGetObj = [UserTargetModel convertDataToModel:tarGetArr[0]];
-    return tarGetObj;
-    
-}
-+(void)saveUserTargetInfo:(UserTargetModel *)obj
-{
-
-    NSString *sqlStr = [NSString stringWithFormat:@"insert into t_targetInfo(userid,stepTarget) values('%@','%@')",[Singleton getUserID],obj.stepTarget];
-    NSString *sqlUpdate = [NSString stringWithFormat:@"update t_targetInfo set stepTarget='%@' where userid = '%@'",obj.stepTarget,[Singleton getUserID]];
-    NSString *selectSql = [NSString stringWithFormat:@"select * from t_targetInfo where userid = '%@'",[Singleton getUserID]];
-    [DBOPERATOR insertDataToSQL:sqlStr updatesql:sqlUpdate withExsitSql:selectSql];
-    
-    [UserTargetModel setUserTargetInfo];
-}
-
-+(void)saveWristbandBother:(UserTargetModel *)obj
-{
-    NSString *selectStr = [NSString stringWithFormat:@"select * from t_targetInfo where userid = '%@'",[Singleton getUserID]];
-    NSString *insertStr = [NSString stringWithFormat:@"insert into t_targetInfo(userid,botherStart,botherEnd,botherStatus) values('%@','%@','%@','%@')",[Singleton getUserID],obj.botherStart,obj.botherEnd,obj.botherStatus];
-    NSString *updateStr = [NSString stringWithFormat:@"update t_targetInfo set botherStart = '%@',botherEnd = '%@',botherStatus = '%@' where userid = '%@'",obj.botherStart,obj.botherEnd,obj.botherStatus,[Singleton getUserID]];
-    [DBOPERATOR insertDataToSQL:insertStr updatesql:updateStr withExsitSql:selectStr];
-    [UserTargetModel setUserTargetInfo];
-}
+//+(UserTargetModel *)getUserTargetInfoObj
+//{
+//    
+//    NSString *selectSql = [NSString stringWithFormat:@"select * from t_targetInfo where userid = '%@'",[Singleton getUserID]];
+//    NSArray *tarGetArr = [DBOPERATOR getDataForSQL:selectSql];
+//    if (tarGetArr.count ==0) {
+//        return [UserTargetModel new];
+//    }
+//    UserTargetModel *tarGetObj = [UserTargetModel convertDataToModel:tarGetArr[0]];
+//    return tarGetObj;
+//    
+//}
+//+(void)saveUserTargetInfo:(UserTargetModel *)obj
+//{
+//
+//    NSString *sqlStr = [NSString stringWithFormat:@"insert into t_targetInfo(userid,stepTarget) values('%@','%@')",[Singleton getUserID],obj.stepTarget];
+//    NSString *sqlUpdate = [NSString stringWithFormat:@"update t_targetInfo set stepTarget='%@' where userid = '%@'",obj.stepTarget,[Singleton getUserID]];
+//    NSString *selectSql = [NSString stringWithFormat:@"select * from t_targetInfo where userid = '%@'",[Singleton getUserID]];
+//    [DBOPERATOR insertDataToSQL:sqlStr updatesql:sqlUpdate withExsitSql:selectSql];
+//    
+//    [UserTargetModel setUserTargetInfo];
+//}
+//
+//+(void)saveWristbandBother:(UserTargetModel *)obj
+//{
+//    NSString *selectStr = [NSString stringWithFormat:@"select * from t_targetInfo where userid = '%@'",[Singleton getUserID]];
+//    NSString *insertStr = [NSString stringWithFormat:@"insert into t_targetInfo(userid,botherStart,botherEnd,botherStatus) values('%@','%@','%@','%@')",[Singleton getUserID],obj.botherStart,obj.botherEnd,obj.botherStatus];
+//    NSString *updateStr = [NSString stringWithFormat:@"update t_targetInfo set botherStart = '%@',botherEnd = '%@',botherStatus = '%@' where userid = '%@'",obj.botherStart,obj.botherEnd,obj.botherStatus,[Singleton getUserID]];
+//    [DBOPERATOR insertDataToSQL:insertStr updatesql:updateStr withExsitSql:selectStr];
+//    [UserTargetModel setUserTargetInfo];
+//}
 @end

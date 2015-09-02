@@ -9,7 +9,7 @@
 #import "UserSportTargetController.h"
 #import "TargrtCellView.h"
 #import "UserSleepTargetController.h"
-#import "UserTargetModel.h"
+
 #import "SendCommandToPeripheral.h"
 #import "UIView+Toast.h"
 #import "TargetInfoManager.h"
@@ -83,7 +83,7 @@
     [[[PersonalGoalsRequest alloc]init] sendMovementGoals:stepUInt Calorie:calorieUInt MovementTime:movementUInt Distances:distancesUInt];
     
     //确认目标，保存到数据库
-    [[TargetInfoManager sharedInstance]updateSportTargetWithDictionary:_sportTarget];
+    [TargetInfoManager updateSportTargetWithDictionary:_sportTarget];
     
     UserSleepTargetController *sleepController = [UserSleepTargetController new];
     sleepController.stepTarget = _stepTarget;
@@ -93,7 +93,7 @@
 {
     _stepTarget = 0;
     if (_sportTarget == nil) {
-        _sportTarget = [[TargetInfoManager sharedInstance] sportTargetFromDB];
+        _sportTarget = [TargetInfoManager sportTargetFromDB];
     }
 }
 - (void)createView
@@ -234,7 +234,7 @@
         [self.view makeToast:@"save ok" duration:1 position:@"center"];
         
         //确认目标，保存到数据库
-        [[TargetInfoManager sharedInstance]updateSportTargetWithDictionary:_sportTarget];
+        [TargetInfoManager updateSportTargetWithDictionary:_sportTarget];
     }
     segmented.selectedSegmentIndex = -1;
     NSLog(@"click segmengted");

@@ -8,7 +8,6 @@
 
 #import "SendCommandToPeripheral.h"
 #import "GetWeather.h"
-#import "DefaultString.h"
 @interface SendCommandToPeripheral()
 
 @end
@@ -36,26 +35,43 @@
     for (int i = 0; i<das.length; i++) {
         NSLog(@"yb = %d",yb[i]);
     }
-
+    
     return das;
 }
 @end
 
 @implementation ScheduleSyncInformation
 
-- (void)scheduleSync:(UInt32)timeValue Content:(NSString*)content
+- (void)scheduleSync:(NSTimeInterval)timeIn  content:(NSString*)content
 {
     Byte bytes[4] = {BLEhead,BLEschedule,0x00,0x26};
-    UInt32 time = timeValue;
-    UInt8 source = 0;
-    NSString *stgContent = content;
-    NSData *contentData = [stgContent dataUsingEncoding:NSUTF8StringEncoding];
+    UInt16 leg = CFSwapInt16(13);
+    UInt8 box = 1;
+    UInt32 t = CFSwapInt32(timeIn);
+    NSData *contentData = [content dataUsingEncoding:NSUTF8StringEncoding];
     
+    NSMutableData *sendData = [NSMutableData dataWithBytes:bytes length:sizeof(bytes)];
+    [sendData appendBytes:&leg length:sizeof(leg)];
+    [sendData appendBytes:&box length:sizeof(box)];
+    [sendData appendBytes:&t length:sizeof(t)];
+    UInt8 source = 0;
+    [sendData appendBytes:&source length:sizeof(source)];
+    [sendData appendData:contentData];
+    
+    int l = 20 - sendData.length;
+    for (int i = 0; i<l; i++) {
+        UInt8 v = 0;
+        [sendData appendBytes:&v length:sizeof(v)];
+        
+    }
+    
+    [self.manage writeData:sendData];
     
 }
 - (void)scheduleReminOpen
 {
-//        Byte 
+    //Byte *bytes = ScheduleRemindOpen;
+    
 }
 - (void)scheduleReminOff
 {
@@ -74,17 +90,16 @@
 - (void)timeSync
 {
     NSTimeInterval t = [[NSDate date] timeIntervalSince1970];
-
+    
     Byte by[4] = {BLEhead,BLEtimeAndWeather,0x00,0x22};
-    UInt16 leg = 13;
+    UInt16 leg = CFSwapInt16(13);
     UInt8 box = 1;
     UInt32 timeValue = t;
     UInt8 timezone = 8;
-    
     NSMutableData *data = [NSMutableData dataWithBytes:by length:sizeof(by)];
     [data appendBytes:&leg length:sizeof(leg)];
     [data appendBytes:&box length:sizeof(box)];
-
+    
     NSData *da = [NSData dataWithBytes:&timeValue length:sizeof(timeValue)];
     Byte *byData = (Byte*)[da bytes];
     Byte yb[[da length]];
@@ -99,21 +114,32 @@
     
     [data appendBytes:&yb length:sizeof(yb)];
     [data appendBytes:&timezone length:sizeof(timezone)];
-
+    
+    int l = 20 - data.length;
+    for (int i = 0; i< l; i++) {
+        UInt8 v = 0;
+        [data appendBytes:&v length:sizeof(v)];
+    }
     [self.manage writeData:data];
 }
 - (void)weatherSync
 {
     Byte by[4] = {BLEhead,BLEtimeAndWeather,0x00,0x21};
-    UInt16 leg = 13;
+    UInt16 leg = CFSwapInt16(13);
     UInt8 box = 1;
     NSData *getWeatherData = [[GetWeather shareGetWeather]weatherByte];
     NSMutableData *sendData = [NSMutableData dataWithBytes:&by length:sizeof(by)];
     [sendData appendBytes:&leg length:sizeof(leg)];
     [sendData appendBytes:&box length:sizeof(box)];
     [sendData appendData:getWeatherData];
-    [self.manage writeData:sendData];
     
+    int l = 20 - sendData.length;
+    for (int i = 0; i< l; i++) {
+        UInt8 v = 0;
+        [sendData appendBytes:&v length:sizeof(v)];
+    }
+    
+    [self.manage writeData:sendData];
 }
 
 @end
@@ -128,31 +154,31 @@
     UInt8 alarmMin = alarmin;
     UInt8 repeat  = rep;
     UInt8 open = openCMD;
-    UInt16 alerInterval = alerInstervalValue;
+    UInt16 alerInterval = CFSwapInt16(alerInstervalValue);
     UInt8 source = 0;
     UInt8 capacityAlarm = capacityOpen;
-    NSString *string = alerTitle;
+    NSString *string = @"好";
     NSData *titleData = [string dataUsingEncoding:NSUTF8StringEncoding];
-
-    UInt16 leg = 9+titleData.length;
-    UInt16 legCF = CFSwapInt16(leg);
-
-    NSMutableData *data = [NSMutableData dataWithBytes:bytes length:sizeof(bytes)];
-    [data appendBytes:&legCF length:sizeof(legCF)];
     
+    UInt16 leg = CFSwapInt16(9+titleData.length);
+    NSMutableData *data = [NSMutableData dataWithBytes:bytes length:sizeof(bytes)];
+    [data appendBytes:&leg length:sizeof(leg)];
     int i = 0;
     while (i<=titleData.length/4) {
         UInt8 box = i+1;
         NSMutableData *sendData = [NSMutableData dataWithData:data].mutableCopy;
         [sendData appendBytes:&box length:sizeof(box)];
-        [sendData appendBytes:&alarmNumber length:sizeof(alarmNumber)];
-        [sendData appendBytes:&alarmHour length:sizeof(alarmHour)];
-        [sendData appendBytes:&alarmMin length:sizeof(alarmMin)];
-        [sendData appendBytes:&repeat length:sizeof(repeat)];
-        [sendData appendBytes:&open length:sizeof(open)];
-        [sendData appendBytes:&alerInterval length:sizeof(alerInterval)];
-        [sendData appendBytes:&source length:sizeof(source)];
-        [sendData appendBytes:&capacityAlarm length:sizeof(capacityAlarm)];
+        if (i==0) {
+            
+            [sendData appendBytes:&alarmNumber length:sizeof(alarmNumber)];
+            [sendData appendBytes:&alarmHour length:sizeof(alarmHour)];
+            [sendData appendBytes:&alarmMin length:sizeof(alarmMin)];
+            [sendData appendBytes:&repeat length:sizeof(repeat)];
+            [sendData appendBytes:&open length:sizeof(open)];
+            [sendData appendBytes:&alerInterval length:sizeof(alerInterval)];
+            [sendData appendBytes:&source length:sizeof(source)];
+            [sendData appendBytes:&capacityAlarm length:sizeof(capacityAlarm)];
+        }
         
         if (i==titleData.length/4) {
             [sendData appendData:[titleData subdataWithRange:NSMakeRange(i*4, titleData.length%4)]];
@@ -179,11 +205,16 @@
 - (void)alermList
 {
     Byte bytes[4] = {BLEhead,BLEalarm,0x00,0x25};
-    UInt16 leg = 0x00;
+    UInt16 leg = CFSwapInt16(13);
     UInt8 box = 1;
     NSMutableData *data = [NSMutableData dataWithBytes:bytes length:sizeof(bytes)];
     [data appendBytes:&leg length:sizeof(leg)];
     [data appendBytes:&box length:sizeof(box)];
+    NSInteger l = 20-data.length;
+    for (int i = 0; i< l; i++) {
+        UInt8 v = 0;
+        [data appendBytes:&v length:sizeof(v)];
+    }
     [self.manage writeData:data];
     
 }
@@ -367,7 +398,7 @@
 
 - (void)getTrainGoals
 {
-    Byte bytes[4] = {BLEhead,BLEmotionGoal,0x00,0x23};
+    Byte bytes[4] = {BLEhead,BLEmotionGoal,0x00,0x25};
     UInt16 leg = 0x00;
     UInt8 box = 1;
     NSMutableData *data = [NSMutableData dataWithBytes:bytes length:sizeof(bytes)];
@@ -421,49 +452,59 @@
 }
 
 @end
-@implementation UserInfoMation
 
-- (void)sendUserInfoMation:(UInt8)age Gender:(UInt8)gender High:(UInt8)high Weight:(UInt8)weight Name:(NSString*)name
+@implementation UserInfomation
+
+- (void)sendUserInfomationToBand:(UInt8)age Gender:(UInt8)gender Height:(UInt8)height Weight:(UInt8)weight Name:(NSString*)name
 {
-    NSData *nData = [name dataUsingEncoding:NSUTF8StringEncoding];
-
     Byte bytes[4] = {BLEhead,BLEuserInfomation,0x00,0x21};
-    UInt16 leg = 4+nData.length;
     NSMutableData *data = [NSMutableData dataWithBytes:bytes length:sizeof(bytes)];
+    NSData *nameData = [name dataUsingEncoding:NSUTF8StringEncoding];
+    UInt16 leg = CFSwapInt16(4+nameData.length);
     [data appendBytes:&leg length:sizeof(leg)];
-    
     int i = 0;
-    while (i<=nData.length/9) {
+    while (nameData.length/9 >= i) {
+        NSMutableData *sendData = [NSMutableData dataWithData:data];
         UInt8 box = i+1;
-        NSMutableData *sendData = [NSMutableData dataWithData:data].mutableCopy;
-        [sendData appendBytes:&box length:sizeof(box)];
-        [sendData appendBytes:&age length:sizeof(age)];
-        [sendData appendBytes:&gender length:sizeof(gender)];
-        [sendData appendBytes:&high length:sizeof(high)];
-        [sendData appendBytes:&weight length:sizeof(weight)];
-
-        if (i==nData.length/9) {
-            [sendData appendData:[nData subdataWithRange:NSMakeRange(i*9, nData.length%9)]];
+        UInt8 userAge = age;
+        UInt8 userGender = gender;
+        UInt8 userHeight = height;
+        UInt8 userWeight = weight;
+        NSMutableData *sendNameData = [NSMutableData data];
+        if (nameData.length/9==i) {
+            sendNameData = [nameData subdataWithRange:NSMakeRange(i*9, nameData.length%9)].mutableCopy;
         }else{
-            [sendData appendData:[nData subdataWithRange:NSMakeRange(i*9, 9)]];
+            sendNameData = [nameData subdataWithRange:NSMakeRange(i*9, 9)].mutableCopy;
         }
+        [sendData appendBytes:&box length:sizeof(box)];
+        [sendData appendBytes:&userAge length:sizeof(userAge)];
+        [sendData appendBytes:&userGender length:sizeof(userGender)];
+        [sendData appendBytes:&userHeight length:sizeof(userHeight)];
+        [sendData appendBytes:&userWeight length:sizeof(userWeight)];
+        [sendData appendData:sendNameData];
         [self.manage writeData:sendData];
         i++;
     }
 }
-
-
 @end
 @implementation HistoryData
 
 - (void)getHostoryDataRequest
 {
     Byte bytes[4] = {BLEhead,BLEhistory,0x00,0x21};
-    UInt16 leg = 0x00;
+    UInt16 leg = CFSwapInt16(13);
     UInt8 box = 1;
+    UInt8 values = 0;
     NSMutableData *data = [NSMutableData dataWithBytes:bytes length:sizeof(bytes)];
     [data appendBytes:&leg length:sizeof(leg)];
     [data appendBytes:&box length:sizeof(box)];
+    [data appendBytes:&values length:sizeof(values)];
+    int l = 20 - data.length;
+    for (int i = 0; i <l ; i++) {
+        UInt8 va = 0;
+        [data appendBytes:&va length:sizeof(va)];
+        
+    }
     [self.manage writeData:data];}
 
 - (void)SendCommandDeleteHostoryData

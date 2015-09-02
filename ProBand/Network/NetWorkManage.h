@@ -8,13 +8,12 @@
 
 #import <Foundation/Foundation.h>
 #import "LoginModel.h"
-//#import "sleepDate_deviceidManage.h"
-//#import "stepDate_deviceidManage.h"
 #import "stepDate_deviceid_Model.h"
 #import "sleepDate_deviceid_Model.h"
 #import "settingInfo_Model.h"
-@class UserInfoModel;
-@class UserTargetModel;
+@class t_userInfo;
+@class t_stepData;
+
 @class StepdownModel;
 @class AllModel;
 #import "SettingStatus.h"
@@ -96,7 +95,7 @@ static  NSString * const DownloadFileURL = @"";
  *  @param user  用户Model
  *  @param block 结果通过block返回
  */
-+ (void)submitUserInfoToServer:(UserInfoModel *)user withUserImage:(NSData *)userImage withUnitsFormat:(NSString *)HeightStr withUnitWeight:(NSString *)weightStr withBlock:(void (^)(BOOL, id))block;
++ (void)submitUserInfoToServer:(t_userInfo *)user withUserImage:(NSData *)userImage withUnitsFormat:(NSString *)HeightStr withUnitWeight:(NSString *)weightStr withBlock:(void (^)(BOOL, id))block;
 
 /**
  *  从服务器获取用户信息
@@ -111,7 +110,7 @@ static  NSString * const DownloadFileURL = @"";
  *  @param userTarger 用户目标Model
  *  @param block      结果通过block返回
  */
-+ (void)setUpUserTarget:(UserTargetModel *)userTarger withBlock:(void (^)(BOOL, id))block;
++ (void)setUpUserTarget:(t_stepData *)userTarger withBlock:(void (^)(BOOL, id))block;
 /**
  *  获取个人目标
  *

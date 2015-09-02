@@ -10,14 +10,8 @@
 #import "CustomDatePickerView.h"
 #import "HomeViewController.h"
 
-#define HOUR @"hour"
-#define MINTE @"min"
+#import "TargetInfoManager.h"
 
-#define KM1 @"km1"
-#define KM2 @"km2"
-
-#define ISSElECT @"isSelect"
-#define TRAIN @"train"
 
 @interface UserTrainTargetController ()
 {
@@ -26,8 +20,11 @@
     UILabel *valueLabel;
     
     NSUserDefaults *userDefaults;
+    
+    NSString *_trainTime;
+    NSString *_trainDistance;
 }
-
+@property (nonatomic, strong)t_goal_exercise *exerciseTarget;
 @end
 
 @implementation UserTrainTargetController
@@ -38,6 +35,11 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    if (_exerciseTarget == nil) {
+        _exerciseTarget = [TargetInfoManager exerciseTargetFromDB];
+        _trainTime = _exerciseTarget.goal_time;
+        _trainDistance = _exerciseTarget.goal_distance;
+    }
     userDefaults = [NSUserDefaults standardUserDefaults];
     
     self.titleLabel.text = @"训练目标";
@@ -50,16 +52,11 @@
 }
 - (void)rightBtnClick:(id)sender
 {
-    
-    
     HomeViewController *home = [[HomeViewController alloc]init];
     [self.navigationController pushViewController:home animated:YES];
 }
 - (void)createView
 {
-    
-    NSDictionary *dict = [userDefaults objectForKey:TRAIN];
-    
     
     bgScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
     bgScrollView.backgroundColor = [UIColor whiteColor];
@@ -109,18 +106,7 @@
     [segmented addTarget:self action:@selector(segmentedSel) forControlEvents:UIControlEventValueChanged];
     [bgScrollView addSubview:segmented];
     
-    if (dict==nil) {
-                valueLabel.attributedText = [self getAttributedStr:@"0小时0分钟"];
-        return;
-    }
-    if ([[dict objectForKey:ISSElECT] intValue]) {
-        
-        valueLabel.attributedText = [self returnKMString:[NSString stringWithFormat:@"%@.%@",[dict objectForKey:KM1],[dict objectForKey:KM2]]];
-        
-    }else{
-        valueLabel.attributedText = [self getAttributedStr:[NSString stringWithFormat:@"%@小时%@分钟",[dict objectForKey:HOUR],[dict objectForKey:MINTE]]];
-    
-    }
+    valueLabel.attributedText = [self getAttributedStr:_exerciseTarget.goal_time];
 }
 
 - (void)setTrainTime:(UIButton *)sender
@@ -129,20 +115,12 @@
     dateview.modelType = showDate;
     dateview.view.frame = [UIScreen mainScreen].bounds;
     [dateview returnSelectTime:^(NSString *hourValues, NSString *minuteValues) {
-        
-        valueLabel.attributedText = [self getAttributedStr:[NSString stringWithFormat:@"%@小时%@分钟",hourValues,minuteValues]];
-        NSMutableDictionary *dict = [[NSMutableDictionary alloc]init];
-        [dict setObject:hourValues forKey:HOUR];
-        [dict setObject:minuteValues forKey:MINTE];
-        [dict setObject:@"0" forKey:ISSElECT];
-        
-        [userDefaults setObject:dict forKey:TRAIN];
-        [userDefaults synchronize];
-
+        NSString *timeStr = [NSString stringWithFormat:@"%@小时%@分钟",hourValues,minuteValues];
+        valueLabel.attributedText = [self getAttributedStr:timeStr];
+        _trainTime = timeStr;
     }];
     [[UIApplication sharedApplication].keyWindow addSubview:dateview.view];
-    
-    
+
 }
 - (void)setTrainDistance:(UIButton *)sender
 {
@@ -150,15 +128,9 @@
     dateview.modelType = showKM;
     dateview.view.frame = [UIScreen mainScreen].bounds;
     [dateview returnSelectTime:^(NSString *hourValues, NSString *minuteValues) {
-        
-        valueLabel.attributedText = [self returnKMString:[NSString stringWithFormat:@"%@.%@",hourValues,minuteValues]];
-        NSMutableDictionary *dict = [[NSMutableDictionary alloc]init];
-        [dict setObject:hourValues forKey:KM1];
-        [dict setObject:minuteValues forKey:KM2];
-        [dict setObject:@"1" forKey:ISSElECT];
-        
-        [userDefaults setObject:dict forKey:TRAIN];
-        [userDefaults synchronize];
+        NSString *distanceStr = [NSString stringWithFormat:@"%@.%@",hourValues,minuteValues];
+        valueLabel.attributedText = [self returnKMString:distanceStr];
+        _trainDistance =   [NSString stringWithFormat:@"%d",(int)[distanceStr floatValue]*1000];
     }];
     [[UIApplication sharedApplication].keyWindow addSubview:dateview.view];
     
@@ -167,7 +139,12 @@
 
 - (void)segmentedSel
 {
-    
+    if (segmented.selectedSegmentIndex == 0)
+    {
+        _exerciseTarget.goal_time = _trainTime;
+        _exerciseTarget.goal_distance = _trainDistance;
+        [TargetInfoManager updateExerciseTargetWithDictionary:_exerciseTarget];
+    }
     segmented.selectedSegmentIndex = -1;
 }
 - (void)didReceiveMemoryWarning {

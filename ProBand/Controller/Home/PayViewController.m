@@ -35,42 +35,48 @@
     {
         moneyY = 40;
     }
+   
+    self.view.backgroundColor = COLOR(48, 54, 60);
     
-    UIImageView *bgimage = [[UIImageView alloc]initWithFrame:CGRectMake(0, -80, SCREEN_WIDTH, SCREEN_HEIGHT)];
-    bgimage.image = [UIImage imageNamed:@"pay_my_bank_card_bg.png"];
-    [self.view addSubview:bgimage];
-    
-    UIImageView *iconMoneyImage = [[UIImageView alloc]initWithFrame:CGRectMake(SCREEN_WIDTH/2 - 60,moneyY, 30, 30)];
-    iconMoneyImage.image = [UIImage imageNamed:@"daily_balance"];
-    [self.view addSubview:iconMoneyImage];
-    UILabel *titleLab = [PublicFunction getlabel:CGRectMake(iconMoneyImage.frame.origin.x + 40, iconMoneyImage.frame.origin.y, 150, 30) text:NSLocalizedString(@"electronic_cash_amount", nil) color:[UIColor whiteColor] size:16];
+//    UIImageView *iconMoneyImage = [[UIImageView alloc]initWithFrame:CGRectMake(SCREEN_WIDTH/2 - 60,moneyY, 30, 30)];
+//    iconMoneyImage.image = [UIImage imageNamed:@"daily_balance"];
+//    [self.view addSubview:iconMoneyImage];
+    UILabel *titleLab = [PublicFunction getlabel:CGRectMake(SCREEN_WIDTH/2-140, moneyY+15, 100, 30) text:NSLocalizedString(@"electronic_cash_amount", nil) color:[UIColor whiteColor] size:16];
     [self.view addSubview:titleLab];
     
-   // UILabel *moneyLab = [PublicFunction getlabel:CGRectMake(iconMoneyImage.frame.origin.x - 30, iconMoneyImage.frame.origin.y + 50, 190, 60) text:@"182,70" fontSize:60 color:[UIColor whiteColor] align:@"center"];
-    UILabel *moneyLab = [[UILabel alloc]initWithFrame:CGRectMake(iconMoneyImage.frame.origin.x - 30, iconMoneyImage.frame.origin.y + 50, 190, 60)];
-    moneyLab.text = @"182,70";
-    moneyLab.textColor = [UIColor whiteColor];
+    UILabel *moneyLab = [[UILabel alloc]initWithFrame:CGRectMake(CGRectGetMaxX(titleLab.frame), CGRectGetMinY(titleLab.frame)-22, 190, 60)];
+    moneyLab.text = @"$182.70";
+    moneyLab.textColor = COLOR(51, 126, 225);
     moneyLab.textAlignment = NSTextAlignmentCenter;
-    moneyLab.font = [UIFont fontWithName:APP_FONT_THIN size:60];
+    moneyLab.font = [UIFont fontWithName:APP_FONT_BASE size:50];
+//    moneyLab.backgroundColor = [UIColor yellowColor];
     [self.view addSubview:moneyLab];
     
+    CGFloat imageX = 255;
+    CGFloat imageY = 173.5;
+    UIImageView *bgImage1 = [[UIImageView alloc]initWithFrame:CGRectMake(SCREEN_WIDTH/2-imageX*0.9/2, moneyLab.frame.origin.y+80, imageX*0.9, imageY*0.9)];
+    bgImage1.image = [UIImage imageNamed:@"pay_jh_card.png"];
+    bgImage1.alpha = 0.6;
+    [self.view addSubview:bgImage1];
     
+    UIImageView *bgImage2 = [[UIImageView alloc]initWithFrame:CGRectMake(SCREEN_WIDTH/2-imageX*0.95/2, CGRectGetMinY(bgImage1.frame)+10, imageX*0.95, imageY*0.95)];
+    bgImage2.image = [UIImage imageNamed:@"pay_jh_card.png"];
+    bgImage2.alpha = 0.3;
+    [self.view addSubview:bgImage2];
     
-    UIImageView *blankBgImage = [[UIImageView alloc]initWithFrame:CGRectMake(SCREEN_WIDTH/2-126.75, moneyLab.frame.origin.y + 80, 253.5, 78.5)];
-    blankBgImage.image = [UIImage imageNamed:@"pay_bank_card_00.png"];
+    UIImageView *blankBgImage = [[UIImageView alloc]initWithFrame:CGRectMake(SCREEN_WIDTH/2-imageX/2, CGRectGetMinY(bgImage1.frame)+20, imageX, imageY)];
+    blankBgImage.image = [UIImage imageNamed:@"pay_jh_card.png"];
+    blankBgImage.alpha = 1;
     [self.view addSubview:blankBgImage];
     
     if (iPhone4) {
         
         moneyLab.font = [UIFont systemFontOfSize:50];
-        moneyLab.frame = CGRectMake(iconMoneyImage.frame.origin.x - 30, iconMoneyImage.frame.origin.y + 20, 190, 60);
-        
-        //blankBgImage.frame = CGRectMake(10, moneyLab.frame.origin.y + 50, SCREEN_WIDTH - 20, 110);
     }
     
     
     
-    UILabel *numberLab = [PublicFunction getlabel:CGRectMake(10, blankBgImage.bounds.size.height - 40, blankBgImage.bounds.size.width - 20, 30) text:@"**************4444" fontSize:30 color:[UIColor whiteColor] align:@"center"];
+    UILabel *numberLab = [PublicFunction getlabel:CGRectMake(10, blankBgImage.bounds.size.height - 40, blankBgImage.bounds.size.width - 20, 30) text:@"**************4444" fontSize:20 color:COLOR(42, 46, 52) align:@"center"];
     [blankBgImage addSubview:numberLab];
     
     

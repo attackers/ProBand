@@ -231,6 +231,7 @@
                 [scheduleDic setValue:[slotsDic objectForKey:@"date"] forKey:@"date"];
                 NSDate *startDate = [self returnScheduleDate:[slotsDic objectForKey:@"date"] time:[slotsDic objectForKey:@"time"]];
                 [[EKEventManager shareEKEventManager] createEventWithTitle:@"提醒" startDate:startDate endDate:startDate notes:[subSemanticDic objectForKey:@"content"]];
+            
                 if (scheduleDefaults) {
                     NSArray *array = scheduleDefaults;
                     NSMutableArray *schArray = [NSMutableArray arrayWithArray:array];

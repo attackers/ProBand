@@ -78,6 +78,7 @@ typedef enum
         }
     }
     [_eColumnChart setDataSource:self];
+    _eColumnChart.backgroundColor = [UIColor clearColor];
     [self addSubview:_eColumnChart];
 }
 //绘制三色的柱状图:colorArray每个元素为包含3种颜色的数组,valueArray的元素为包含3个元素的数组
@@ -129,6 +130,7 @@ typedef enum
         }
     }
     [_eColumnChart setDataSource:self];
+    _eColumnChart.backgroundColor = [UIColor clearColor];
     [self addSubview:_eColumnChart];
 }
 //绘制均匀的三色图
@@ -181,6 +183,7 @@ typedef enum
         }
     }
     [_eColumnChart setDataSource:self];
+    _eColumnChart.backgroundColor = [UIColor clearColor];
     [self addSubview:_eColumnChart];
 }
 
@@ -231,6 +234,7 @@ typedef enum
         }
     }
     [_eColumnChart setDataSource:self];
+    _eColumnChart.backgroundColor = [UIColor clearColor];
     [self addSubview:_eColumnChart];
 }
 
@@ -273,6 +277,7 @@ typedef enum
         }
     }
     [_eColumnChart setDataSource:self];
+    _eColumnChart.backgroundColor = [UIColor clearColor];
     [self addSubview:_eColumnChart];
 }
 //总共多少列

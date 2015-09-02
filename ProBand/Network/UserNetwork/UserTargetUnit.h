@@ -11,9 +11,9 @@
 @interface UserTargetUnit : NetWorking
 
 //取出设置的目标
-+(UserTargetModel *)getUserTargetInfoObj;
-+(void)saveUserTargetInfo:(UserTargetModel *)obj;
-+(void)saveWristbandBother:(UserTargetModel *)obj;
+//+(UserTargetModel *)getUserTargetInfoObj;
+//+(void)saveUserTargetInfo:(UserTargetModel *)obj;
+//+(void)saveWristbandBother:(UserTargetModel *)obj;
 
 
 

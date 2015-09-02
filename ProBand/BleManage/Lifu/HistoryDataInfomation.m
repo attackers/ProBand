@@ -252,7 +252,7 @@
             break;
         case 28:
         {
-            //去除数组中相同的元素:by Star
+            //去除数组中相同的元素,插入结束后需要将消息传出:by Star
             everyDayArray = [Singleton arrayFromRepeatArray:everyDayArray];
             sleepDataArray = [Singleton arrayFromRepeatArray:sleepDataArray];
             [DailyDataManager insertStepArray:everyDayArray];

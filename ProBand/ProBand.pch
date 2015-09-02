@@ -17,11 +17,10 @@
 #import "Loading.h"
 #import "DateHandle.h"
 #import "DBOperator.h"
-#import "AlgorithmHelper.h"
+//#import "AlgorithmHelper.h"
 #import "LenovoShareSdk.h"
 #import "BaseViewController.h"
 #import "MJRefresh.h"
-#import "FMDBTool.h"
 #import "AssisitTool.h"
 
 #import "NetWorkManage.h"
@@ -30,20 +29,13 @@
 #import "XlabTools.h"
 
 #import "BaseModel.h"
-#import "UserTargetModel.h"
-#import "UserInfoModel.h"
-#import "HomePageModel.h"
-#import "StepDataModel.h"
-#import "SleepDataModel.h"
-#import "StepdownModel.h"
-#import "SleepdownModel.h"
 #import "ClockUnit.h"
 
 #import "AppDelegate.h"
 #import "CustomAlertview.h"
 #import "DefaultString.h"
 
-
+#import "DBManager.h"
 #define  navBarHeight 50
 //#define weburl @"http://192.168.2.231/"
 #define weburl @"http://116.7.249.146:8168/"
@@ -108,7 +100,7 @@
 #define byBule [UIColor colorWithRed:24/255.0 green:121/255.0 blue:202/255.0 alpha:1]
 
 #define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
-#define navigationColor  UIColorFromRGB(0x001e38)
+#define navigationColor  COLOR(48, 54, 60)//UIColorFromRGB(0x001e38)
 #define splitLineColor UIColorFromRGB(0x46A3FF)
 #define ColorRGB(R,G,B) [UIColor colorWithRed:R/255.0 green:G/255.0 blue:B/255.0 alpha:1]
 
@@ -131,7 +123,7 @@
 #define scheduleDefaults [[NSUserDefaults standardUserDefaults]objectForKey:@"scheduleDefaults"]
 #define saveScheduleDefaults(id)   [[NSUserDefaults standardUserDefaults]setObject:id forKey:@"scheduleDefaults"]
 //数据库表名的宏：目前总共18个表
-#define UserInfoTable @"t_userInfo"//个人信息
+#define UserInfoTable @"t_userInfo"//个人信息   
 #define SettingInfoTable @"t_settingInfo"//设置数据
 
 #define StepDataTable @"t_stepData"//计步数据

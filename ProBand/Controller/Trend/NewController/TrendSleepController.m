@@ -99,9 +99,9 @@ typedef enum{
         //_segment.backgroundColor = COLOR(12, 90, 123);
     _segment.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"volume_day_sel"]];
         _segment.selectedSegmentIndex = 0;
-        _segment.frame = CGRectMake(SCREEN_WIDTH/2-70.7, 85, 141.5, 26);
+        _segment.frame = CGRectMake(SCREEN_WIDTH/2-133.5/2, 85, 133.5, 19);
         _segment.layer.masksToBounds = YES;
-        _segment.layer.cornerRadius = 13;
+        _segment.layer.cornerRadius = 9.5;
     
     NSDictionary* selectedTextAttributes = @{NSFontAttributeName:[UIFont boldSystemFontOfSize:12],
                                              NSForegroundColorAttributeName: [UIColor whiteColor]};
@@ -115,8 +115,8 @@ typedef enum{
     //添加左右按钮
     UIButton *leftBn = [[UIButton alloc]initWithFrame:CGRectMake(0, chartY+chartHeight/2-40, 30, 50)];
     leftBn.imageEdgeInsets = UIEdgeInsetsMake(8.5, 9.25, 8.5, 9.25);
-    [leftBn setImage:[UIImage imageNamed:@"left_arrow_invalid"] forState:UIControlStateNormal];
-    [leftBn setImage:[UIImage imageNamed:@"left_arrow_press"] forState:UIControlStateHighlighted];
+    [leftBn setImage:[UIImage imageNamed:@"left_arrow.png"] forState:UIControlStateNormal];
+    [leftBn setImage:[UIImage imageNamed:@"left_arrow_press.png"] forState:UIControlStateHighlighted];
     [leftBn addTarget:self action:@selector(showLeftView) forControlEvents:UIControlEventTouchUpInside];
     [self.headView addSubview:leftBn];
     
@@ -510,7 +510,7 @@ typedef enum{
     DetailChartView *chartView = [[DetailChartView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH-60, chartHeight)];
     //只有159个值，检查数据库
     //[chartView drawChartViewWithDateArray:dateArray valueArray:valueArray pillarWidth:pillarWidth spaceWidth:spaceWidth columnLabelType:columnLabelType chartColor:COLOR(12,78, 141)];
-    [chartView drawUnQualblyChartWithDateArray:dateArray valueArray:valueArray pillarWidths:pillarWidths spaceWidths:spaceWidths columnLabelType:1 chartColor:COLOR(12,76,135)];
+    [chartView drawUnQualblyChartWithDateArray:dateArray valueArray:valueArray pillarWidths:pillarWidths spaceWidths:spaceWidths columnLabelType:1 chartColor:COLOR(84,171,225)];//COLOR(12,76,135)
     if ([date isEqualToString:currentDate] && dayModel.valueArray.count>0)
     {
         SleepDayModel *model = [[SleepDataManager sharedInstance] sleepDayModelForDate:currentDate];

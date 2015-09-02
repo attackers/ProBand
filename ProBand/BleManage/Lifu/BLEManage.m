@@ -16,7 +16,7 @@
     NSMutableArray *peripheralArray;
     PeripheralModel *peripheralModel;
     CBCharacteristic *writeCharacteristic;
-
+    
 }
 @end
 @implementation BLEManage
@@ -26,13 +26,13 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         manager = [[BLEManage alloc]init];
-    
+        
     });
     return manager;
 }
 -(instancetype)init
 {
-
+    
     if (self ==[super init]) {
         
         _centralManager = [[CBCentralManager alloc]initWithDelegate:self queue:nil];
@@ -71,13 +71,14 @@
                 
             }
             _isOpenOrOFF = NO;
-           UIAlertView *aler = [[UIAlertView alloc]initWithTitle:nil message:NSLocalizedString(@"not_support_BT", nil) delegate:nil cancelButtonTitle:nil otherButtonTitles:NSLocalizedString(@"i_know", nil), nil];
+            UIAlertView *aler = [[UIAlertView alloc]initWithTitle:nil message:NSLocalizedString(@"not_support_BT", nil) delegate:nil cancelButtonTitle:nil otherButtonTitles:NSLocalizedString(@"i_know", nil), nil];
             [aler show];
         }
             break;
         case CBCentralManagerStateUnauthorized:
         {
             if (_centerState) {
+                
                 _centerState(NO);
                 
             }
@@ -89,11 +90,11 @@
         case CBCentralManagerStatePoweredOff:
         {
             if (_centerState) {
+                
                 _centerState(NO);
                 
             }
             _isOpenOrOFF = NO;
-//            [central stopScan];
             NSLog(@"蓝牙未打开");
         }//蓝牙未打开，系统会自动提示打开，所以不用自行提示
         default:
@@ -105,21 +106,13 @@
  */
 - (void)startscanPeripheral
 {
-
+    
     /**
      *  启动扫描，其中第一个参数为设备的服务UUID,第二个为扫描方式，当前是设备扫描设备后，对已扫描设备不做重复扫描
      */
-//    [_centralManager scanForPeripheralsWithServices:@[[CBUUID UUIDWithString:@"F000C0E1-0451-4000-B000-000000000000"]] options:@{ CBCentralManagerScanOptionAllowDuplicatesKey : @NO}];
+ 
     [_centralManager scanForPeripheralsWithServices:nil options:@{CBCentralManagerScanOptionAllowDuplicatesKey:@NO}];
-//    [_centralManager scanForPeripheralsWithServices:nil options:nil];
 
-//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(15.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//        
-////        if (peripheralArray.count == 0) {
-//            [self stopScanPeripheral];
-////        }
-//        
-//    });
 }
 /**
  *  停止扫描
@@ -130,7 +123,7 @@
     if (_prolist) {
         
         _prolist(peripheralArray);
-
+        
     }
 }
 - (void)returnProbandArray:(GetProbandList)list
@@ -150,22 +143,29 @@
 - (void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary *)advertisementData RSSI:(NSNumber *)RSSI
 {
     _centralManager = central;
-    NSString *defaultUUID = [[NSUserDefaults standardUserDefaults]objectForKey:@"defaultBand"];
-    NSArray *array = [advertisementData objectForKey:@"kCBAdvDataSolicitedServiceUUIDs"];
-    CBUUID *uuidAdvData = array[2];
-    NSLog(@"%@",uuidAdvData.UUIDString);
+    _peripheral = peripheral;
+    NSString *defaultUUID = [[NSUserDefaults standardUserDefaults]objectForKey:[Singleton getUserID]];
     
     if ([defaultUUID isEqualToString:peripheral.identifier.UUIDString]) {
         [_centralManager stopScan];
         peripheralModel.peripheral = peripheral;
+        _peripheral = peripheral;
         [_centralManager connectPeripheral:peripheral options:nil];
         
     }
-    
     if (peripheralArray.count == 0) {
-        if (![peripheral.name isEqualToString:@"Pro-Band"]) {
+        
+        if (peripheral.name.length>7) {
+            NSString *nameSub = [peripheral.name substringWithRange:NSMakeRange(0, 7)];
+            if (![nameSub isEqualToString:@"payband"]) {
+                return;
+            }
+        }else{
             return;
         }
+        
+        NSArray *array = [advertisementData objectForKey:@"kCBAdvDataSolicitedServiceUUIDs"];
+        CBUUID *uuidAdvData = array[2];
         peripheralModel.peripheral = peripheral;
         if (uuidAdvData.UUIDString.length== 0 ) {
             peripheralModel.macAddr = @"0000";
@@ -178,60 +178,40 @@
         
     }else{
         @try {
-            if (![peripheral.name isEqualToString:@"Pro-Band"]) {
+            if (peripheral.name.length>7) {
+                NSString *nameSub = [peripheral.name substringWithRange:NSMakeRange(0, 7)];
+                if (![nameSub isEqualToString:@"payband"]) {
+                    return;
+                }
+            }else{
                 return;
             }
             
-//            NSString *uuid = peripheral.identifier.UUIDString;
-//            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF CONTAINS %@",[NSString stringWithFormat:@"%@", uuid]];
-//            NSArray *array = [peripheralArray filteredArrayUsingPredicate: predicate];
-//            NSLog(@"result: %@", array);
-//            
-//            if (array.count == 0) {
-//                
-//                PeripheralModel *m = [[PeripheralModel alloc]init];
-//                if (uuidAdvData.UUIDString.length == 0 ) {
-//                    m.macAddr = @"0000";
-//                }else{
-//                    m.macAddr = uuidAdvData.UUIDString;
-//                }
-//                m.peripheral = peripheral;
-//                [peripheralArray addObject:m];
-//
-//            }
-            
+            BOOL inArray = NO;
             for (int i = 0; i<peripheralArray.count; i++) {
                 PeripheralModel *mode=peripheralArray[i];
-                NSString *uuid = peripheral.identifier.UUIDString;
-                NSLog(@"mode.uuid: %@ \n peripheral.identifier.uuid: %@",mode.UUID,uuid);
-                if (![mode.UUID isEqualToString:uuid]) {
-                    PeripheralModel *m = [[PeripheralModel alloc]init];
-                    if (uuidAdvData.UUIDString.length == 0 ) {
-                        m.macAddr = @"0000";
-                    }else{
-                        m.macAddr = uuidAdvData.UUIDString;
-                    }
-                    m.peripheral = peripheral;
-                    [peripheralArray addObject:m];
+                NSString *pName = peripheral.name;
+                if ([mode.name isEqualToString:pName]) {
+                    inArray = YES;
+                    break;
                 }
             }
+            if (!inArray) {
+                NSArray *array = [advertisementData objectForKey:@"kCBAdvDataSolicitedServiceUUIDs"];
+                CBUUID *uuidAdvData = array[2];
+                PeripheralModel *m = [[PeripheralModel alloc]init];
+                if (uuidAdvData.UUIDString.length == 0 ) {
+                    m.macAddr = @"0000";
+                }else{
+                    m.macAddr = uuidAdvData.UUIDString;
+                }
+                m.peripheral = peripheral;
+                [peripheralArray addObject:m];
             }
-        
-//            for (PeripheralModel *mode in peripheralArray) {
-//                NSString *uuid = peripheral.identifier.UUIDString;
-//                if (![mode.UUID isEqualToString:uuid]) {
-//                    PeripheralModel *m = [[PeripheralModel alloc]init];
-//                    if (uuidAdvData.UUIDString.length== 0 ) {
-//                        m.macAddr = @"0000";
-//
-//                    }else{
-//                        m.macAddr = uuidAdvData.UUIDString;
-//
-//                    }
-//                    m.peripheral = peripheral;
-//                    [peripheralArray addObject:m];
-//                }
-//            }
+            
+            inArray = NO;
+        }
+
         @catch (NSException *exception) {
             NSLog(@"exception:%@",exception);
         }
@@ -242,7 +222,7 @@
     NSLog(@"advertisementData: %@",advertisementData);
     NSDictionary *dic = advertisementData;
     [dic setValue:peripheral forKey:@"peripheral"];
-
+    
 }
 
 /**
@@ -258,10 +238,10 @@
     _peripheral.delegate = self;
     if (_connectOK) {
         _connectOK(YES);
-    
+        
     }
- 
-    [[NSUserDefaults standardUserDefaults]setObject:peripheral.identifier.UUIDString forKey:@"defaultBand"];
+    
+    [[NSUserDefaults standardUserDefaults]setObject:peripheral.identifier.UUIDString forKey:[Singleton getUserID]];
     NSArray	*serviceArray	= [NSArray arrayWithObjects:[CBUUID UUIDWithString:SERVICE_UUID], nil];
     [_peripheral discoverServices:serviceArray];
 }
@@ -275,8 +255,8 @@
 - (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error
 {
     _peripheral = peripheral;
-//    UIAlertView *aler = [[UIAlertView alloc]initWithTitle:@"is not" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"ok", nil];
-//    [aler show];
+    //    UIAlertView *aler = [[UIAlertView alloc]initWithTitle:@"is not" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"ok", nil];
+    //    [aler show];
     if (error) {
         if (_connectOK) {
             _connectOK(NO);
@@ -302,7 +282,8 @@
     }
     if (_connectOK) {
         _connectOK(NO);
-    }    NSLog(@"is Disconnect peripheral");
+    }
+    NSLog(@"is Disconnect peripheral");
     [central connectPeripheral:_peripheral options:nil];
 }
 
@@ -325,7 +306,7 @@
         
         if ([service.UUID.UUIDString isEqualToString:SERVICE_UUID]) {
             
-            NSArray *array = [NSArray arrayWithObjects:[CBUUID UUIDWithString:WRITE_UUID],nil];
+            NSArray *array = [NSArray arrayWithObjects:[CBUUID UUIDWithString:WRITE_UUID],[CBUUID UUIDWithString:RADE_UUID],nil];
             [peripheral discoverCharacteristics:array forService:service];
             
         }
@@ -338,27 +319,35 @@
  */
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error
 {
-    
+    if (_connectOK) {
+        _connectOK(YES);
+        
+    }
     if (error) {
         NSLog(@"Error discovering characteristics: %@", [error localizedDescription]);
         return;
     }
     NSLog(@"discover characteristics");
     NSArray *array =  service.characteristics;
-    _peripheral = peripheral;
     
     for (CBCharacteristic *characteristic in array) {
-        
+        _peripheral = peripheral;
+
         CBUUID *uuid = characteristic.UUID;
-        [peripheral setNotifyValue:YES forCharacteristic:characteristic];
-        writeCharacteristic = characteristic;
         NSLog(@"charateristicUUID:%@",uuid.UUIDString);
+        if ([uuid.UUIDString isEqualToString:WRITE_UUID]) {
+            
+            writeCharacteristic = characteristic;
+            NSLog(@"charateristicUUID:%@",uuid.UUIDString);
+            [self syncData];
+            
+        }
+        if ([uuid.UUIDString isEqualToString:RADE_UUID]) {
+            _peripheral = peripheral;
+            [peripheral setNotifyValue:YES forCharacteristic:characteristic];
+        }
+
         
-        [[[DateAndWeatherInformation alloc]init] timeSync];
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [[[DateAndWeatherInformation alloc]init] weatherSync];
-        });
-  
     }
 }
 /**
@@ -403,17 +392,17 @@
         NSLog(@"Error discovering characteristics: %@", [error localizedDescription]);
         return;
     }
-
+    
     NSData *data = characteristic.value;
     if (_getdata) {
         _getdata(data);
     }
-    #ifdef _DEBUG
+#ifdef _DEBUG
     const unsigned char *byte = (Byte*)[data bytes];
     for (int i= 0;i<[data length];i++) {
         NSLog(@"byte：%@",[NSString stringWithFormat:@"%02x", byte[i]]);
     }
-    #endif
+#endif
     
 }
 #pragma mark *************************** 自定义方法 **********************************
@@ -433,7 +422,7 @@
 
 - (void)writeData:(NSData*)byte
 {
-
+    
     NSData *data = byte;
 #warning -写特性可能为空
     [_peripheral writeValue:data forCharacteristic:writeCharacteristic type:CBCharacteristicWriteWithoutResponse];
@@ -444,7 +433,7 @@
     _getdata = ^(NSData *datas){
         data(datas);
     };
-
+    
 }
 - (void)connectPeripheral:(CBPeripheral*)peripheral
 {
@@ -455,7 +444,7 @@
 - (void)isConnectOk
 {
     if (_peripheral.state != CBPeripheralStateConnected) {
-        
+    
         [_centralManager cancelPeripheralConnection:_peripheral];
         if (_connectOK) {
             
@@ -465,9 +454,54 @@
 }
 - (void)connectState:(ConnectOk)state
 {
+    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
     _connectOK = ^(BOOL ok){
         state(ok);
+        if (ok) {
+            [[NSNotificationCenter defaultCenter]postNotificationName:@"connect" object:@YES];
+        }else{
+            [[NSNotificationCenter defaultCenter]postNotificationName:@"connect" object:@NO];
+
+        }
     };
-    
+    [def synchronize];
 }
+- (void)syncData
+{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [[[DateAndWeatherInformation alloc]init] timeSync];
+    });
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [[[DateAndWeatherInformation alloc]init] weatherSync];
+    });
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            Byte by[4] = {BLEhead,BLEBingDing,0x33,0x21};
+            UInt8 box = 1;
+            UInt8 type = 2;
+            NSString *userID = [Singleton getUserID];
+            NSLog(@"userID:%@",userID);
+            NSData *uData = [userID dataUsingEncoding:NSUTF8StringEncoding];
+            UInt16 leg = CFSwapInt16(13);
+            
+            NSMutableData *sendData = [NSMutableData dataWithBytes:by length:sizeof(by)];
+            [sendData appendBytes:&leg length:sizeof(leg)];
+            [sendData appendBytes:&box length:sizeof(box)];
+            [sendData appendBytes:&type length:sizeof(type)];
+            [sendData appendData:uData];
+            if (sendData.length<20) {
+                NSInteger l = 20 - sendData.length;
+                for (NSInteger i = 0; i<l; i++) {
+                    UInt8 v = 0;
+                    [sendData appendBytes:&v length:sizeof(v)];
+                }
+            }
+            [self writeData:sendData];
+    });
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [[[HistoryData alloc]init] getHostoryDataRequest];
+    });
+
+}
+
 @end

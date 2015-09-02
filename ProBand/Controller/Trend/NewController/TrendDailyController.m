@@ -84,9 +84,9 @@ typedef enum{
     //_segment.backgroundColor = COLOR(12, 90, 123);
     _segment.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"volume_day_sel"]];
     _segment.selectedSegmentIndex = 0;
-    _segment.frame = CGRectMake(SCREEN_WIDTH/2-70.7, 85, 141.5, 26);
+    _segment.frame = CGRectMake(SCREEN_WIDTH/2-133.5/2, 85, 133.5, 19);
     _segment.layer.masksToBounds = YES;
-    _segment.layer.cornerRadius = 13;
+    _segment.layer.cornerRadius = 9.5;
     
     NSDictionary* selectedTextAttributes = @{NSFontAttributeName:[UIFont boldSystemFontOfSize:12],
                                              NSForegroundColorAttributeName: [UIColor whiteColor]};
@@ -100,8 +100,8 @@ typedef enum{
     //添加左右按钮
     UIButton *leftBn = [[UIButton alloc]initWithFrame:CGRectMake(0, chartY+chartHeight/2-40, 30, 50)];
     leftBn.imageEdgeInsets = UIEdgeInsetsMake(8.5, 9.25, 8.5, 9.25);
-    [leftBn setImage:[UIImage imageNamed:@"left_arrow_invalid"] forState:UIControlStateNormal];
-    [leftBn setImage:[UIImage imageNamed:@"left_arrow_press"] forState:UIControlStateHighlighted];
+    [leftBn setImage:[UIImage imageNamed:@"left_arrow.png"] forState:UIControlStateNormal];
+    [leftBn setImage:[UIImage imageNamed:@"left_arrow_press.png"] forState:UIControlStateHighlighted];
     [leftBn addTarget:self action:@selector(showLeftView) forControlEvents:UIControlEventTouchUpInside];
     [self.headView addSubview:leftBn];
     
@@ -471,6 +471,7 @@ typedef enum{
     NSArray *startArr = dailyModel.startArray;
     NSArray *endArr = dailyModel.endArray;
      NSMutableArray *spaceWidths = [NSMutableArray array];
+    [pillarWidths addObject:@0.0];
     //进行单分钟数据加粗的处理
     for (int i = 0; i < endArr.count; i ++)
     {
@@ -487,9 +488,13 @@ typedef enum{
         [pillarWidths addObject:[NSNumber numberWithFloat:pillerX]];
         [spaceWidths addObject:[NSNumber numberWithFloat:spaceX]];
     }
-    NSArray *valueArray = [NSArray arrayWithArray:dailyModel.valueArray];
+    float lastSpace = (1440-[[endArr lastObject] intValue])*250/1440.0;
+    [spaceWidths addObject:[NSNumber numberWithFloat:lastSpace]];
+    NSMutableArray *valueArray = [NSMutableArray array];
+    [valueArray addObject:@0];
+    [valueArray addObjectsFromArray:dailyModel.valueArray];
     //只有159个值，检查数据库:valueArray不能超过480个值,后来会变成640个？前160个值为0，与时间有关？
-    [chartView drawUnQualblyChartWithDateArray:dateArray valueArray:valueArray pillarWidths:pillarWidths spaceWidths:spaceWidths columnLabelType:1 chartColor:COLOR(27, 205, 115)];
+    [chartView drawUnQualblyChartWithDateArray:dateArray valueArray:valueArray pillarWidths:pillarWidths spaceWidths:spaceWidths columnLabelType:1 chartColor:COLOR(84, 171, 225)];
     if ([date isEqualToString:currentDate] && dailyModel.valueArray.count>0) {
         DailyDayModel *model = [[DailyDataManager sharedInstance] dailyDayModelForDate:currentDate];
         if (model.valueArray.count > 0) {
@@ -504,7 +509,7 @@ typedef enum{
     NSArray *valueArray = [NSArray arrayWithArray:weekModel.valueArray];
     NSArray *dateArray = [NSArray arrayWithArray:weekModel.dateArray];
     DetailChartView *chartView = [[DetailChartView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH-60, chartHeight)];
-    [chartView drawChartViewWithDateArray:dateArray valueArray:valueArray pillarWidth:(SCREEN_WIDTH-60)/7.0-5.0 spaceWidth:5.0 columnLabelType:0 chartColor:COLOR(27, 205, 115)];
+    [chartView drawChartViewWithDateArray:dateArray valueArray:valueArray pillarWidth:(SCREEN_WIDTH-60)/7.0-5.0 spaceWidth:5.0 columnLabelType:0 chartColor:COLOR(84, 171, 225)];//COLOR(27, 205, 115)
     if ([date isEqualToString:currentDate] && weekModel.valueArray.count>0) {
         [self updateControllerWithUpDescribeArray:weekModel.upDescribeArray downDescribeArray:weekModel.downDescribeArray upValueArray:weekModel.upValueArray downValueArray:weekModel.downValueArray];
     }
@@ -517,7 +522,7 @@ typedef enum{
     NSArray *valueArray = [NSArray arrayWithArray:monthModel.valueArray];
     
     DetailChartView *chartView =[[DetailChartView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH-60, chartHeight)];
-    [chartView drawChartViewWithDateArray:dateArray valueArray:valueArray pillarWidth:(SCREEN_WIDTH-60)/4.0-5.0 spaceWidth:5.0 columnLabelType:0 chartColor:COLOR(27, 205, 115)];
+    [chartView drawChartViewWithDateArray:dateArray valueArray:valueArray pillarWidth:(SCREEN_WIDTH-60)/4.0-5.0 spaceWidth:5.0 columnLabelType:0 chartColor:COLOR(84, 171, 225)];
     if ([date isEqualToString:currentDate] && monthModel.valueArray.count>0) {
         [self updateControllerWithUpDescribeArray:monthModel.upDescribeArray downDescribeArray:monthModel.downDescribeArray upValueArray:monthModel.upValueArray downValueArray:monthModel.downValueArray];
     }

@@ -151,16 +151,16 @@
                 if (_fullValueOfTheGraph < 0.01) {
                     _fullValueOfTheGraph = 1;
                 }
-                float heightGap = self.frame.size.height / 10.0;
+                float heightGap = self.frame.size.height / 4.0;
                 float valueGap = _fullValueOfTheGraph / 10.0;
-                for (int i = 0; i < 11; i++)
+                for (int i = 0; i < 5; i++)
                 {
-                    UIView *horizontalLine = [[UIView alloc] initWithFrame:CGRectMake(0, heightGap * i, self.frame.size.width, HORIZONTAL_LINE_HEIGHT)];
-                    horizontalLine.backgroundColor = ELightGrey;
-                    //[self addSubview:horizontalLine];
+//                    UIView *horizontalLine = [[UIView alloc] initWithFrame:CGRectMake(0, heightGap * i, self.frame.size.width, HORIZONTAL_LINE_HEIGHT)];
+//                    horizontalLine.backgroundColor = [UIColor lightGrayColor];//ELightGrey
+//                    [self addSubview:horizontalLine];
                     
-                    EColumnChartLabel *eColumnChartLabel = [[EColumnChartLabel alloc] initWithFrame:CGRectMake(-1 * Y_COORDINATE_LABEL_WIDTH, -heightGap / 2.0 + heightGap * i, Y_COORDINATE_LABEL_WIDTH, heightGap)];
-                    [eColumnChartLabel setTextAlignment:NSTextAlignmentCenter];
+//                    EColumnChartLabel *eColumnChartLabel = [[EColumnChartLabel alloc] initWithFrame:CGRectMake(-1 * Y_COORDINATE_LABEL_WIDTH, -heightGap / 2.0 + heightGap * i, Y_COORDINATE_LABEL_WIDTH, heightGap)];
+//                    [eColumnChartLabel setTextAlignment:NSTextAlignmentCenter];
 //                    eColumnChartLabel.text = [[NSString stringWithFormat:@"%.1f ", valueGap * (10 - i)] stringByAppendingString:[_dataSource highestValueEColumnChart:self].unit];
                     
                     //eColumnChartLabel.backgroundColor = ELightBlue;
@@ -172,6 +172,25 @@
         
         [self reloadData];
     }
+}
+
+- (void)drawRect:(CGRect)rect
+{
+    //添加绘制虚线的方法
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextBeginPath(context);
+    CGContextSetLineWidth(context, 0.5);
+    CGContextSetStrokeColorWithColor(context, [UIColor lightGrayColor].CGColor);
+    CGFloat lengths[] = {5,2};
+    CGContextSetLineDash(context, 0, lengths, 2);
+    float heightGap = self.frame.size.height / 4.0;
+    for (int i = 0; i < 5; i ++)
+    {
+        CGContextMoveToPoint(context, 0, heightGap * i);
+        CGContextAddLineToPoint(context, self.frame.size.width, heightGap * i);
+        CGContextStrokePath(context);
+    }
+    CGContextClosePath(context);
 }
 - (void)setMaxColumnColor:(UIColor *)maxColumnColor
 {

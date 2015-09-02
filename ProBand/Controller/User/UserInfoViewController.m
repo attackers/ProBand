@@ -9,14 +9,13 @@
 #import "UserInfoViewController.h"
 #import "CustomAlertview.h"
 #import "SingleCamera.h"
-#import "UserInfoModel.h"
-#import "userInfoManage.h"
+
 #import "CustomPickerView.h"
 #import "CustomActionSheetView.h"
 #import "TextKeyBoadViewController.h"
 #import "AQPhotoPickerView.h"
-
-
+#import "t_userInfo.h"
+#import "UserInfoManager.h"
 #define HeadView_Height 140
 #define LOCAL_INFO_KEY @"userInfoLocalKey"
 #define LOCAL_HEADIMAGE_KEY @"userHeadImageLocalKey"
@@ -58,9 +57,9 @@ typedef enum : NSUInteger {
     NSInteger currentWeight;//体重
     UIView *customAlertView;
 }
-@property (nonatomic, strong)UserInfoModel *userInfoObj;
+@property (nonatomic, strong)t_userInfo *userInfoObj;
 //验证用户信息是否改变的model:保持不变
-@property (nonatomic, strong)UserInfoModel *fixedInfoObj;
+@property (nonatomic, strong)t_userInfo *fixedInfoObj;
 @end
 
 @implementation UserInfoViewController
@@ -79,23 +78,20 @@ typedef enum : NSUInteger {
     [self initData];
     [self createView];
     
-    NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
-    NSLog(@"getUserID:%@ %@ %@ %@ %@ %@ %@ %@",[d objectForKey:@"getUserID"],[d objectForKey:@"userName"],[d objectForKey:@"height"],[d objectForKey:@"weight"],[d objectForKey:@"gender"],[d objectForKey:@"birthDay"],[d objectForKey:@"weightUnit"],[d objectForKey:@"heightUnit"]);
-    
     // Do any additional setup after loading the view.
 }
 //需要验证用户信息是否变化
-- (void)backToLastController
+- (void)gotoBackBtnClick
 {
     //先转为dictionary再比较
-    NSDictionary *infoDic1 = [UserInfoModel dictionaryFromModel:_userInfoObj];
-    NSDictionary *infoDic2 = [UserInfoModel dictionaryFromModel:_fixedInfoObj];
+    NSDictionary *infoDic1 = [UserInfoManager dictionaryFromModel:_userInfoObj];
+    NSDictionary *infoDic2 = [UserInfoManager dictionaryFromModel:_fixedInfoObj];
     if ([infoDic1 isEqualToDictionary:infoDic2]) {
         [self.navigationController popViewControllerAnimated:YES];
     }
     else
     {
-        CustomAlertview *alert = [[CustomAlertview alloc]initWithTitle:@"提示" message:@"您要保存修改的信息吗？" delegate:self withContextView:nil cancelButtonTitle:NSLocalizedString(@"confirm", nil) otherButtonTitles:@[NSLocalizedString(@"cancel", nil)]];
+        CustomAlertview *alert = [[CustomAlertview alloc]initWithTitle:@"提示" message:@"您要保存修改的信息吗？" delegate:self withContextView:nil cancelButtonTitle:NSLocalizedString(@"cancel", nil) otherButtonTitles:@[NSLocalizedString(@"confirm", nil)]];
         alert.tag = saveInfoTag;
         [alert show];
     }
@@ -105,24 +101,28 @@ typedef enum : NSUInteger {
 {
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardWillShown:) name:UIKeyboardDidShowNotification object:nil];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyBoardWillHide:) name:UIKeyboardWillHideNotification object:nil];
-    NSUserDefaults *d = [NSUserDefaults standardUserDefaults];
+
     [SingleCamera sharedIntance].delegate = self;
     describeArray = [NSArray arrayWithObjects:NSLocalizedString(@"icon", nil),NSLocalizedString(@"band_id", nil),NSLocalizedString(@"nickname", nil),NSLocalizedString(@"gender", nil),NSLocalizedString(@"age", nil),NSLocalizedString(@"height", nil),NSLocalizedString(@"weight", nil), nil];
-    if (_userInfoObj == nil) {
-        //从数据库取出数据
-        _userInfoObj = [UserInfoModel getUserInfoData:[Singleton getUserID]];
-        if (_userInfoObj == nil) {
-            NSDictionary *localDic = @{@"Id":[d objectForKey:@"getUserID"],@"birthDay":[d objectForKey:@"birthDay"],@"gender":NSLocalizedString([d objectForKey:@"gender"], nil),@"height":[d objectForKey:@"height"],@"heightUnit":@"cm",@"imageUrl":@"",@"userId":[Singleton getUserID],@"userName":[d objectForKey:@"userName"],@"weight":[d objectForKey:@"weight"],@"weightUnit":@"kg"};
-            _userInfoObj = [UserInfoModel convertDataToModel:localDic];
-        }
+    
+    if ([UserInfoManager getUserInfoDic] != nil)
+    {
+        _userInfoObj = [UserInfoManager getUserInfoDic];
+        _fixedInfoObj = [UserInfoManager getUserInfoDic];;
     }
-    if (_fixedInfoObj == nil) {
-        //从数据库取出数据
-        _fixedInfoObj = [UserInfoModel getUserInfoData:[Singleton getUserID]];
-        if (_fixedInfoObj == nil) {
-            NSDictionary *localDic = @{@"Id":@"",@"birthDay":@"24岁",@"gender":NSLocalizedString(@"man", nil),@"height":@"180",@"heightUnit":@"cm",@"imageUrl":@"",@"userId":[Singleton getUserID],@"userName":@"Star",@"weight":@"70",@"weightUnit":@"kg"};
-            _fixedInfoObj = [UserInfoModel convertDataToModel:localDic];
-        }
+    else
+    {
+        NSDictionary *dic = @{@"age":@"24",
+                              @"gender":@"0",
+                              @"height":@"170",
+                              @"mac":[Singleton getMacSite],
+                              @"imageUrl":@"",
+                              @"userid":[Singleton getUserID],
+                              @"username":@"昵称",
+                              @"weight":@"60"
+                              };
+        _userInfoObj = [t_userInfo convertDataToModel:dic];
+        _fixedInfoObj = [t_userInfo convertDataToModel:dic];
     }
 
     _yearArr = [NSMutableArray array];
@@ -286,27 +286,33 @@ typedef enum : NSUInteger {
             break;
         case 2:
         {
-            labelText = _userInfoObj.userName;
+            labelText = _userInfoObj.username;
         }
             break;
         case 3:
         {
-            labelText = _userInfoObj.gender;
+            if ([_userInfoObj.gender isEqualToString:@"0"]) {
+                labelText = @"男";
+            }
+            else
+            {
+                labelText = @"女";
+            }
         }
             break;
         case 4:
         {
-            labelText = _userInfoObj.birthDay;
+            labelText = _userInfoObj.age;
         }
             break;
         case 5:
         {
-            labelText = [NSString stringWithFormat:@"%@%@",_userInfoObj.height,_userInfoObj.heightUnit];
+            labelText = [NSString stringWithFormat:@"%@厘米",_userInfoObj.height];
         }
             break;
         case 6:
         {
-            labelText = [NSString stringWithFormat:@"%@%@",_userInfoObj.weight,_userInfoObj.weightUnit];
+            labelText = [NSString stringWithFormat:@"%@千克",_userInfoObj.weight];
         }
             break;
         default:
@@ -409,7 +415,7 @@ typedef enum : NSUInteger {
             vc.view.frame = [UIScreen mainScreen].bounds;
             vc.pickerType = pickerType_age;
             [vc returnSelectRowString:^(NSString *values) {
-                _userInfoObj.birthDay = [NSString stringWithFormat:@"%@岁",values];
+                _userInfoObj.age = [NSString stringWithFormat:@"%@",values];
                 [personalInfoTable reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
             }];
             [[UIApplication sharedApplication].keyWindow addSubview:vc.view];
@@ -461,7 +467,7 @@ typedef enum : NSUInteger {
             if(buttonIndex == 1)//确定按钮:保存用户昵称
             {
                 UITextField *textField = (UITextField *)[alertView viewWithTag:1000];
-                _userInfoObj.userName = textField.text;
+                _userInfoObj.username = textField.text;
                 NSIndexPath *indexPath = [NSIndexPath indexPathForRow:1 inSection:0];
                 [personalInfoTable reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
             }
@@ -496,7 +502,7 @@ typedef enum : NSUInteger {
                 //                [personalInfoTable reloadRowsAtIndexPaths:@[tmpIndexpath] withRowAnimation:UITableViewRowAnimationFade];
                 NSString *birthday = [NSString stringWithFormat:@"%@年%@月%@日",_yearArr[year],_monthArr[month],_dayArr[day]];
                 //[valueArray replaceObjectAtIndex:1 withObject:birthday];
-                _userInfoObj.birthDay = birthday;
+                _userInfoObj.age = birthday;
                 NSIndexPath *tmpIndexpath=[NSIndexPath indexPathForRow:3 inSection:0];
                 [personalInfoTable reloadRowsAtIndexPaths:@[tmpIndexpath] withRowAnimation:UITableViewRowAnimationFade];
             }
@@ -519,7 +525,6 @@ typedef enum : NSUInteger {
                 
                 //NSIndexPath *tmpIndexpath=[NSIndexPath indexPathForRow:2 inSection:0];
                 _userInfoObj.height = height;
-                _userInfoObj.heightUnit = unitStr;
                 [personalInfoTable reloadData];
             }
             
@@ -539,7 +544,6 @@ typedef enum : NSUInteger {
                     
                 }
                 _userInfoObj.weight = weight;
-                _userInfoObj.weightUnit = unitStr;
                 
                 [personalInfoTable reloadData];
             }
@@ -839,13 +843,13 @@ typedef enum : NSUInteger {
         switch (button.tag) {
             case 9900:
             {
-                _userInfoObj.gender = @"男";
+                _userInfoObj.gender = @"0";
                 
             }
                 break;
             case 9901:
             {
-                _userInfoObj.gender = @"女";
+                _userInfoObj.gender = @"1";
                 
             }
                 break;
@@ -863,7 +867,7 @@ typedef enum : NSUInteger {
 {
     TextKeyBoadViewController *info = [[TextKeyBoadViewController alloc]init];
     [info textFieldString:^(NSString *stg) {
-        _userInfoObj.userName = stg;
+        _userInfoObj.username = stg;
         NSIndexPath *tmpIndexpath = [NSIndexPath indexPathForRow:2 inSection:0];
         [personalInfoTable reloadRowsAtIndexPaths:@[tmpIndexpath] withRowAnimation:UITableViewRowAnimationFade];
         
@@ -914,21 +918,10 @@ typedef enum : NSUInteger {
     //             return;
     //        }
     //       }
-    [self addAlertView];
+    //[self addAlertView];
     
-    BOOL exist = [[DBOperator shared]checkTheDataExistOnDB:@"t_userInfo" withKey:@"userId" withValue:[Singleton getUserID]];
-    if (exist) {
-        BOOL success = [userInfoManage updateUserId:[Singleton getUserID] userName:_userInfoObj.userName height:_userInfoObj.height weight:_userInfoObj.weight gender:_userInfoObj.gender birthDay:_userInfoObj.birthDay imageUrl:nil weightUnit:_userInfoObj.weightUnit heightUnit:_userInfoObj.heightUnit];
-        if (success) {
-            NSLog(@"更新数据库成功");
-        }
-    }
-    else
-    {
-        NSLog(@"该数据不存在");
-        int success = [userInfoManage adduserId:[Singleton getUserID] userName:_userInfoObj.userName height:_userInfoObj.height weight:_userInfoObj.weight gender:_userInfoObj.gender birthDay:_userInfoObj.birthDay imageUrl:nil weightUnit:_userInfoObj.weightUnit heightUnit:_userInfoObj.heightUnit];
-        NSLog(@"添加数据为%d",success);
-    }
+    
+    [UserInfoManager insertDefaultUserInfo:_userInfoObj];
 }
 - (void)addAlertView
 {

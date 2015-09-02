@@ -78,11 +78,11 @@
     
     //添加左侧的线条
     UIImageView *pointView = [[UIImageView alloc]initWithFrame:CGRectMake(10, 0, 10, 10)];
-    pointView.image = [UIImage imageNamed:@"volume_point"];
+    pointView.image = [UIImage imageNamed:@"volume_point_01.png"];
     [cell.contentView addSubview:pointView];
     CALayer *leftLine = [CALayer layer];
     leftLine.frame = CGRectMake(14.5, 10, 0.5, 75);
-    leftLine.backgroundColor = CGCOLOR(0, 215, 137);
+    leftLine.backgroundColor = CGCOLOR(96, 110, 124);
     leftLine.opacity = 0.5;
     [cell.contentView.layer addSublayer:leftLine];
     
@@ -93,7 +93,7 @@
     
     //添加一个背景的View
     UIView *bgView = [[UIView alloc]initWithFrame:CGRectMake(CGRectGetMinX(timeLab.frame), CGRectGetMaxY(timeLab.frame), SCREEN_WIDTH-CGRectGetMinX(timeLab.frame)-20, 60)];
-    bgView.backgroundColor = COLOR(11, 45, 75);
+    bgView.backgroundColor = COLOR(96, 110, 124);//COLOR(11, 45, 75)
     //bgView.alpha = 0.03;
     [cell.contentView addSubview:bgView];
     //添加下方的label

@@ -30,7 +30,7 @@
     CGContextAddLineToPoint(context, width/2, 0);
     CGContextClosePath(context);
     [[UIColor clearColor]setStroke];
-    [COLOR(7, 26, 48) setFill];
+    [COLOR(28, 31, 35) setFill];
     CGContextDrawPath(context, kCGPathFillStroke);
 }
 

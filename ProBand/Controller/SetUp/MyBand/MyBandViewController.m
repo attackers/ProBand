@@ -12,13 +12,15 @@
 #import "SubSegmentedControl.h"
 #import "BlueToothTestViewController.h"
 #import "BLEManage.h"
+#import "SendCommandToPeripheral.h"
+#import "GetDataForPeriphera.h"
 @interface MyBandViewController ()<UITableViewDataSource,UITableViewDelegate>
 {
     UITableView *_tableView;
     NSArray *_titleArray;
     UILabel *_battertDetailLabel;
     UIView *customAlertView;
-
+    NSString *isconnect;
 }
 
 @end
@@ -41,8 +43,22 @@
     _tableView.tableFooterView = [[UIView alloc] init];
     _tableView.tableHeaderView = [self createHeader];
     _tableView.backgroundColor = [UIColor colorWithRed:250/255.0 green:250/255.0 blue:250/255.0 alpha:1];
+    isconnect = NSLocalizedString(@"band_disconnect", nil);
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(BlueToothConnectState:) name:@"connect" object:nil];
 }
+- (void)BlueToothConnectState:(NSNotification*)sender
+{
+    id ok = sender.object;
+    if (ok) {
+        isconnect = NSLocalizedString(@"band_connected", nil);
 
+    }else{
+        
+        isconnect = NSLocalizedString(@"band_disconnect", nil);
+
+    }
+    [_tableView reloadData];
+}
 
 - (UIView *)createHeader
 {
@@ -53,8 +69,23 @@
     [view addSubview:label];
     
     BatteryLeftView *batteryLeftView = [[BatteryLeftView alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 100, 10, viewH-40, viewH-40)];
-    batteryLeftView.progress = 0.25;
-    batteryLeftView.usedDays = @"四";
+    
+    if ([BLEManage shareCentralManager].isOpenOrOFF) {
+        [[[ElectricInformation alloc]init] getElectricRequest];
+    }
+    [[[GetDataForPeriphera alloc]init] returnElectricValue:^(CGFloat fValue) {
+       
+        batteryLeftView.progress = fValue/100;
+        batteryLeftView.usedDays = [NSString stringWithFormat:@"%.0f",fValue/12];
+
+    }];
+    
+    [[BLEManage shareCentralManager] connectState:^(BOOL ok) {
+       
+        
+        NSLog(@"connect ok or no");
+    }];
+    
     [view addSubview:batteryLeftView];
     
     UIView *separatorView = [[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(label.frame), SCREEN_WIDTH, 20)];
@@ -107,16 +138,15 @@
         accessoryLabel.text = @"payBand";
     }else if(indexPath.row == 2)
     {
-        accessoryLabel.text = NSLocalizedString(@"band_disconnect", nil);
-        BLEManage *bM = [BLEManage shareCentralManager];
-        [bM connectState:^(BOOL ok) {
-            
-            if (ok) {
-                accessoryLabel.text = NSLocalizedString(@"band_connected", nil);
-            }else{
-                accessoryLabel.text = NSLocalizedString(@"band_disconnect", nil);
-            }
-        }];
+        accessoryLabel.text = isconnect;
+        BOOL isConnect = [[NSUserDefaults standardUserDefaults]boolForKey:@"connect"];
+        if (isConnect) {
+            accessoryLabel.text = NSLocalizedString(@"band_connected", nil);
+
+        }else{
+            accessoryLabel.text = NSLocalizedString(@"band_disconnect", nil);
+        }
+
         
     }
     else if(indexPath.row == 3)
@@ -197,7 +227,7 @@
             [customAlertView removeFromSuperview];
         }else{
             [customAlertView removeFromSuperview];
-            [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"defaultBand"];
+            [[NSUserDefaults standardUserDefaults]removeObjectForKey:[Singleton getUserID]];
             BlueToothTestViewController *blue = [[BlueToothTestViewController alloc]init];
             [self.navigationController pushViewController:blue animated:YES];
             

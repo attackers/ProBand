@@ -93,10 +93,6 @@
 {
     currentPage = scrollView.contentOffset.x/320;
     if (x == 320*currentPage&&currentPage!=0) {
-        
-        
-        NSLog(@"添加测试数据:时间过久");
-        //[[FMDBTool sharedInstance]addTestData];
         [self.navigationController pushViewController:[LoginNewController new] animated:YES];
         
     }else{

@@ -11,7 +11,7 @@
 
 @interface SleepViewController : BaseViewController<EPieChartDelegate, EPieChartDataSource>
 
-@property (strong, nonatomic) EPieChart *ePieChart;
+//@property (strong, nonatomic) EPieChart *ePieChart;
 
 - (void)drawViewwithData:(EPieChartDataModel *)dataModel showColor:(BOOL)blean;
 

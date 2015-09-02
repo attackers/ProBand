@@ -23,7 +23,7 @@
     if (self) {
         // Initialization code
         _chartLine              = [CAShapeLayer layer];
-        _chartLine.lineCap      = kCALineCapButt;
+        _chartLine.lineCap      = kCALineCapButt;//kCALineCapButt
         _chartLine.fillColor    = [[UIColor whiteColor] CGColor];
         _chartLine.lineWidth    = self.frame.size.width;
         _chartLine.strokeEnd    = 0.0;

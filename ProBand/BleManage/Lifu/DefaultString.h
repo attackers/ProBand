@@ -15,12 +15,12 @@
 /**
  *  写特性uuid，写入数据
  */
-#define WRITE_UUID    @"F000C0E1-0451-4000-B000-000000000000" // @"6e400002-b5a3-f393-e0a9-e50e24dcca9f"
+#define WRITE_UUID    @"F000F0E7-0451-4000-B000-000000000000" // @"6e400002-b5a3-f393-e0a9-e50e24dcca9f"
 
 /**
  *  读特性uuid，读出数据
  */
-#define RADE_UUID     @"F000C0E3-0451-4000-B000-000000000000" //@"6e400003-b5a3-f393-e0a9-e50e24dcca9f"
+#define RADE_UUID     @"F000C0E1-0451-4000-B000-000000000000" //@"6e400003-b5a3-f393-e0a9-e50e24dcca9f"
 
 #define BLEhead 0xAA
 /**
@@ -87,5 +87,10 @@
  *  传输OTA升级包
  */
 #define BLEOTAUpgradeBox 0x31 /** 传输OTA升级包 **/
+/**
+ *  绑定
+ *
+ */
+#define BLEBingDing 0x28
 #endif
 

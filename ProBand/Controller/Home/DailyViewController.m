@@ -60,7 +60,7 @@
 {
     if ([[NSUserDefaults standardUserDefaults]objectForKey:statisticsStepData]) {
         
-        t_goal_step *step_goal = [[TargetInfoManager alloc]sportTargetFromDB];
+        t_goal_step *step_goal = [TargetInfoManager sportTargetFromDB];
         CGFloat fromDicStep = [step_goal.goal_step floatValue]==0 ? 1.0:[step_goal.goal_step floatValue];
         NSDictionary *stepDic = [[NSUserDefaults standardUserDefaults]objectForKey:statisticsStepData];
         CGFloat totalStep = [[stepDic objectForKey:@"total_step"]floatValue];
@@ -94,8 +94,8 @@
         
         [[[HistoryData alloc]init] getHostoryDataRequest];
         //暂时先写在一个延迟方法中
-        [saftSelf performSelector:@selector(endRefreshingTemp) withObject:saftSelf afterDelay:1];
-        
+        //[saftSelf performSelector:@selector(endRefreshingTemp) withObject:saftSelf afterDelay:1];
+        [[XlabTools sharedInstance]startLoadingInView:saftSelf.view withmessage:@"下拉数据中..."];
         
     }];
     CGFloat bgOffSet = -120;
@@ -169,6 +169,8 @@
     EShadeCircleView *shadeView = (EShadeCircleView*)[self.view viewWithTag:9000];
     [shadeView removeFromSuperview];
     [SyncAlertView shareSyncAlerview:YES];
+    
+    [[XlabTools sharedInstance]stopLoading];
 }
 -(void)createButtomView
 {
@@ -277,7 +279,6 @@
         
     });
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
-        //[[FMDBTool sharedInstance] addAllTestData];
         dispatch_async(dispatch_get_main_queue(), ^{
             [[XlabTools sharedInstance]stopLoading];
             [self.navigationController pushViewController:[TrendDailyController new] animated:YES];
@@ -308,7 +309,7 @@
     round.contentMode = UIViewContentModeRedraw;
     if ([[NSUserDefaults standardUserDefaults]objectForKey:statisticsStepData]) {
         
-        t_goal_step *step_goal = [[TargetInfoManager alloc]sportTargetFromDB];
+        t_goal_step *step_goal = [TargetInfoManager sportTargetFromDB];
         CGFloat fromDicStep = [step_goal.goal_step floatValue]==0 ? 1.0:[step_goal.goal_step floatValue];
         NSDictionary *stepDic = [[NSUserDefaults standardUserDefaults]objectForKey:statisticsStepData];
 
@@ -365,7 +366,7 @@
     
     if ([[NSUserDefaults standardUserDefaults]objectForKey:statisticsStepData]) {
         
-        t_goal_step *step_goal = [[TargetInfoManager alloc]sportTargetFromDB];
+        t_goal_step *step_goal = [TargetInfoManager sportTargetFromDB];
         CGFloat fromDicStep = [step_goal.goal_step floatValue]==0 ? 1.0:[step_goal.goal_step floatValue];
         NSDictionary *stepDic = [[NSUserDefaults standardUserDefaults]objectForKey:statisticsStepData];
         CGFloat totalStep = [[stepDic objectForKey:@"total_step"]floatValue];

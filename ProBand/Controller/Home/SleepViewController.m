@@ -15,13 +15,17 @@
 #import "SendCommandToPeripheral.h"
 
 #import "TotalInfoManager.h"
-@interface SleepViewController ()
+#import "HistoryDataInfomation.h"
+
+#import "CAShadeRoundView.h"
+@interface SleepViewController ()<HistoryDataInfomationDelegate>
 
 @property (nonatomic,strong)UILabel *dreepSleepLab;
 @property (nonatomic,strong)UILabel *lightSleepLab;
 @property (nonatomic,strong)UILabel *weakSleepLab;
 @property (nonatomic,strong)UIScrollView *bigScrollView;
 
+@property (nonatomic, strong)CAShadeRoundView *shadeRoundView;
 @property (nonatomic, strong)t_total_sleepData *currentModel;
 @end
 
@@ -29,45 +33,52 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    //添加同步成功的方法
+    HistoryDataInfomation *history = [HistoryDataInfomation shareHistoryDataInfomation];
+    history.delegate = self;
     
     _currentModel = [TotalInfoManager totalSleepModelFromUserDefaults];
-    EPieChartDataModel *pieModel;
-    if (_currentModel) {
-        pieModel = [[EPieChartDataModel alloc] initWithBudget:[_currentModel.total_deep_sleep intValue] current:[_currentModel.total_light_sleep intValue] estimate:[_currentModel.total_awake_sleep intValue] bgimageOne:@"sleep_dashboard_pointer" bgimageTwo:@"sleep_dashboard_sober" bgimageThree:@"sleep_dashboard_round"];
-    }
-    else
+    CGFloat value = 0.0;
+    if (_currentModel)
     {
-        pieModel = [TestDataModel getModelDataForPieChart];
+      value = ([_currentModel.total_light_sleep intValue]+[_currentModel.total_awake_sleep intValue]+[_currentModel.total_deep_sleep intValue])/1440.0;
     }
+    
     
     [self createView];
 
     //添加by Star
-    [self drawViewwithData:pieModel showColor:YES];
+    [self drawRoundViewWithValue:value];
     //[[SleepDataManager sharedInstance]getSleepData];
 }
-
+- (void)viewWillAppear:(BOOL)animated
+{
+    _bigScrollView.backgroundColor = COLOR(48, 54, 60);
+}
+//如果蓝牙没有连接也需要调用该方法
+- (void)historyDataSyncEnd:(BOOL)end
+{
+    if (end) {
+        [self endRefreshingTemp];
+    }
+}
 -(void)createView
 {
-    
-    _bigScrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
+   _bigScrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
     [_bigScrollView setContentSize:CGSizeMake(SCREEN_WIDTH, SCREEN_HEIGHT +10)];
     _bigScrollView.showsVerticalScrollIndicator = NO;
     [self.view addSubview:_bigScrollView];
-    _bigScrollView.backgroundColor = COLOR(5, 27, 52);
     __block SleepViewController *saftSelf = self;
     [_bigScrollView addHeaderWithCallback:^{
         
         [[[HistoryData alloc]init] getHostoryDataRequest];
-        if (saftSelf.ePieChart) {
-            [saftSelf.ePieChart removeFromSuperview];
-
-        }
         
-        [saftSelf drawViewwithData:[TestDataModel getModelDataForPieChart] showColor:YES];
+        [saftSelf drawRoundViewWithValue:0.0];
         
-        //暂时先写在一个延迟方法中
-        [saftSelf performSelector:@selector(endRefreshingTemp) withObject:saftSelf afterDelay:1];
+        //下拉刷新调用的方法
+        [[XlabTools sharedInstance]startLoadingInView:saftSelf.view withmessage:@"下拉数据中..."];
+        //暂时先写在一个延迟方法中:需要修改
+        //[saftSelf performSelector:@selector(endRefreshingTemp) withObject:saftSelf afterDelay:1];
         
     }];
     
@@ -90,16 +101,19 @@
     {
         bgOffSet = -120;
     }
-     UIImageView *bgimage = [[UIImageView alloc]initWithFrame:CGRectMake(0, bgOffSet, SCREEN_WIDTH, SCREEN_HEIGHT+30+addY)];
-    bgimage.image = [UIImage imageNamed:@"exercise_bg.png"];
-    [_bigScrollView addSubview:bgimage];
+    UIImageView *segmentationImageview = [[UIImageView alloc]initWithFrame:CGRectMake(0, 85, CGRectGetWidth(self.view.frame), 10)];
+    segmentationImageview.image = [UIImage imageNamed:@"daily_projection.png"];
+    segmentationImageview.contentMode = UIViewContentModeScaleAspectFill;
+    [_bigScrollView addSubview:segmentationImageview];
     
-    UILabel *timeTitleLab = [PublicFunction getlabel:CGRectMake(SCREEN_WIDTH/2 - 50,5, 100, 20) text:NSLocalizedString(@"sleep_time", nil) fontSize:14 color:[UIColor whiteColor] align:@"center"];
-    timeTitleLab.font = [UIFont fontWithName:APP_FONT_THIN size:14];
+    _bigScrollView.backgroundColor = COLOR(48, 54, 60);
+    
+    UILabel *timeTitleLab = [PublicFunction getlabel:CGRectMake(SCREEN_WIDTH/2 - 100,25, 60, 20) text:NSLocalizedString(@"sleep_time", nil) fontSize:14 color: ColorRGB(92, 96, 102) align:@"right"];
+    timeTitleLab.font = [UIFont fontWithName:MicrosoftYaHe size:12];
     [_bigScrollView addSubview:timeTitleLab];
     
-    UILabel *timeLab = [PublicFunction getlabel:CGRectMake(SCREEN_WIDTH/2 - 50, CGRectGetMaxY(timeTitleLab.frame), 110, 30) text:@"22:00-08:00" fontSize:16 color:[UIColor whiteColor] align:@"center"];
-    timeLab.font = [UIFont fontWithName:APP_FONT_THIN size:16];
+    UILabel *timeLab = [PublicFunction getlabel:CGRectMake(CGRectGetMaxX(timeTitleLab.frame)+5, CGRectGetMinY(timeTitleLab.frame)-14, 180, 40) text:@"22:00-08:00" fontSize:18 color:ColorRGB(50, 125, 222) align:nil];
+    timeLab.font = [UIFont fontWithName:MicrosoftYaHe size:26];
     [_bigScrollView addSubview:timeLab];
     
     for (int i = 0; i<3; i++) {
@@ -110,16 +124,16 @@
             
             imageView.frame = CGRectMake((i%3)*SCREEN_WIDTH/3 + 40, 260, 25, 25);
         }
-        UILabel *lab = [PublicFunction getlabel:CGRectMake(imageView.frame.origin.x, imageView.frame.origin.y + 30, 40, 30) text:nil fontSize:17 color:[UIColor whiteColor] align:@"center"];
+        UILabel *lab = [PublicFunction getlabel:CGRectMake(imageView.frame.origin.x-5, imageView.frame.origin.y + 60, 40, 30) text:nil fontSize:17 color:[UIColor whiteColor] align:@"center"];// CGRectMake(imageView.frame.origin.x, imageView.frame.origin.y + 30, 40, 30)
         if (iPhone4) {
             
-            lab.frame = CGRectMake(imageView.frame.origin.x - 10, imageView.frame.origin.y + 30, 40, 30);
+            lab.frame = CGRectMake(imageView.frame.origin.x-55, imageView.frame.origin.y + 60, 120, 30);
         }
         [_bigScrollView addSubview:lab];
         if (i==0) {
             imageView.image = [UIImage imageNamed:@"sleep_deep_sleep"];
             lab.text = NSLocalizedString(@"deep_sleep", nil);
-            _dreepSleepLab = [PublicFunction getlabel:CGRectMake(lab.frame.origin.x - 45, lab.frame.origin.y + 30, 120, 30) text:@"" fontSize:12 color:[UIColor whiteColor] align:@"center"];
+            _dreepSleepLab = [PublicFunction getlabel:CGRectMake(lab.frame.origin.x - 45, imageView.frame.origin.y + 30, 120, 30) text:@"" fontSize:12 color:[UIColor whiteColor] align:@"center"];//CGRectMake(lab.frame.origin.x - 45, lab.frame.origin.y + 30, 120, 30)
             [_bigScrollView addSubview:_dreepSleepLab];
             _dreepSleepLab.attributedText = [self getAttributedStr:@"3小时48分钟"];
         }
@@ -127,7 +141,7 @@
         {
             imageView.image = [UIImage imageNamed:@"sleep_light_sleep"];
             lab.text = NSLocalizedString(@"light_sleep", nil);
-            _lightSleepLab = [PublicFunction getlabel:CGRectMake(lab.frame.origin.x - 45, lab.frame.origin.y + 30, 120, 30) text:@"" fontSize:12 color:[UIColor whiteColor] align:@"center"];
+            _lightSleepLab = [PublicFunction getlabel:CGRectMake(lab.frame.origin.x - 45, CGRectGetMinY(_dreepSleepLab.frame), 120, 30) text:@"" fontSize:12 color:[UIColor whiteColor] align:@"center"];
             [_bigScrollView addSubview:_lightSleepLab];
             _lightSleepLab.attributedText = [self getAttributedStr:@"4小时13分钟"];
         }
@@ -135,7 +149,7 @@
         {
             imageView.image = [UIImage imageNamed:@"sleep_sober"];
             lab.text = NSLocalizedString(@"awake", nil);
-            _weakSleepLab = [PublicFunction getlabel:CGRectMake(lab.frame.origin.x - 45, lab.frame.origin.y + 30, 120, 30) text:@"" fontSize:12 color:[UIColor whiteColor] align:@"center"];
+            _weakSleepLab = [PublicFunction getlabel:CGRectMake(lab.frame.origin.x - 45,CGRectGetMinY(_dreepSleepLab.frame), 120, 30) text:@"" fontSize:12 color:[UIColor whiteColor] align:@"center"];
             [_bigScrollView addSubview:_weakSleepLab];
             _weakSleepLab.attributedText = [self getAttributedStr:@"12小时10分钟"];
         }
@@ -151,17 +165,23 @@
     [self showFromDB];
      [self.bigScrollView headerEndRefreshing];
     [SyncAlertView shareSyncAlerview:YES];
+    [[XlabTools sharedInstance]stopLoading];
 }
 
 - (void)showFromDB
 {
-    if (_currentModel)
+    if (_currentModel.userid == nil) {
+        _currentModel =  [TotalInfoManager totalSleepModelFromUserDefaults];
+    }
+    if (_currentModel.userid && _currentModel.mac)
     {
         NSString *totalAwake = _currentModel.total_awake_sleep;
         NSString *totalLight = _currentModel.total_light_sleep;
         NSString *totalDeep = _currentModel.total_deep_sleep;
-        EPieChartDataModel *model = [[EPieChartDataModel alloc]initWithBudget:[totalAwake intValue] current:[totalLight intValue] estimate:[totalDeep intValue] bgimageOne:@"sleep_dashboard_pointer.png" bgimageTwo:@"sleep_dashboard_sober.png" bgimageThree:@"sleep_dashboard_round.png"];
-        [self drawViewwithData:model showColor:YES];
+        CGFloat value = ([totalAwake intValue]+[totalLight intValue]+[totalDeep intValue])/1440.0;
+        [self drawRoundViewWithValue:value];
+        
+        NSLog(@"----%d---%d---%d",[totalDeep intValue],[totalLight intValue],[totalAwake intValue]);
         //更新下方的UI
         _dreepSleepLab.attributedText = [self getAttributedStr:[NSString stringWithFormat:@"%d小时%d分钟",[totalDeep intValue]/60,[totalDeep intValue]%60]];
         _lightSleepLab.attributedText = [self getAttributedStr:[NSString stringWithFormat:@"%d小时%d分钟",[totalLight intValue]/60,[totalLight intValue]%60]];
@@ -169,8 +189,7 @@
     }
     else
     {
-        EPieChartDataModel *model = [[EPieChartDataModel alloc]initWithBudget:0 current:0 estimate:0 bgimageOne:@"sleep_dashboard_pointer.png" bgimageTwo:@"sleep_dashboard_sober.png" bgimageThree:@"sleep_dashboard_round.png"];
-        [self drawViewwithData:model showColor:YES];
+        [self drawRoundViewWithValue:0.0];
         _dreepSleepLab.attributedText = [self getAttributedStr:@"0小时0分钟"];
         _lightSleepLab.attributedText = [self getAttributedStr:@"0小时0分钟"];
         _weakSleepLab.attributedText = [self getAttributedStr:@"0小时0分钟"];
@@ -191,67 +210,21 @@
 }
 
 
-//-(void)buttomBtnClick:(UIButton *)btn
-//{
-//    
-//}
 
-
-- (void)drawViewwithData:(EPieChartDataModel *)dataModel showColor:(BOOL)blean{
-    
-    int y = 220;
-    int k = 70;
-    if (iPhone6||iPhone6plus) {
-        
-        y = 250;
-        k = 110;
-    }
-    else if (iPhone4)
-    {
-        y = 200;
-        k = 55;
-    }
-    if (_ePieChart) {
-        [_ePieChart removeFromSuperview];
-    }
-    
-    _ePieChart = [[EPieChart alloc] initWithFrame:CGRectMake(SCREEN_WIDTH/2- y/2,k,y,y) ePieChartDataModel:dataModel withIsSleep:YES];
-    if (blean) {
-        [_ePieChart.frontPie setLineWidth:15];
-        [_ePieChart.frontPie setRadius:y/2];
-        _ePieChart.frontPie.currentColor = [UIColor colorWithRed:88/255.0 green:172/255.0 blue:223/255.0 alpha:1];//浅睡
-        _ePieChart.frontPie.budgetColor = [UIColor colorWithRed:16/255.0 green:96/255.0 blue:151/255.0 alpha:1];//深睡
-        _ePieChart.frontPie.estimateColor = [UIColor colorWithRed:138/255.0 green:200/255.0 blue:238/255.0 alpha:1];//清醒
-        
-    }
-    
-    
-    [_ePieChart setDelegate:self];
-    [_ePieChart setDataSource:self];
-    
-    [_bigScrollView addSubview:_ePieChart];
-    
-    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(taped:)];
-    [_ePieChart addGestureRecognizer:tapGestureRecognizer];
-    
-}
-
-- (void) taped:(UITapGestureRecognizer *) tapGestureRecognizer
+- (void) taped:(UITapGestureRecognizer *)tapGestureRecognizer
 {
     dispatch_async(dispatch_get_main_queue(), ^{
         //_bigScrollView.backgroundColor = [UIColor yellowColor];
         _bigScrollView.backgroundColor = COLOR(6, 24, 44);
-        [[XlabTools sharedInstance]startLoadingInView:_ePieChart withmessage:@"加载中..."];
+        [[XlabTools sharedInstance]startLoadingInView:_shadeRoundView withmessage:@"加载中..."];
         
     });
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
-        //[[FMDBTool sharedInstance] addAllTestData];
         dispatch_async(dispatch_get_main_queue(), ^{
             [[XlabTools sharedInstance]stopLoading];
             [self.navigationController pushViewController:[TrendSleepController new] animated:YES];
         });
     });
-    
 }
 
 
@@ -259,10 +232,24 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-///创建新版的UI
-- (void)createUI2
+
+- (void)drawRoundViewWithValue:(CGFloat)value
 {
+    if (_shadeRoundView)
+    {
+        [_shadeRoundView removeFromSuperview];
+    }
+    _shadeRoundView = [[CAShadeRoundView alloc]initWithFrame:CGRectMake(0, 30, CGRectGetWidth(self.view.frame), 265)];
+    _shadeRoundView.startColor = COLOR(48, 181, 245);
+    _shadeRoundView.endColor = COLOR(255,182,0);
+    _shadeRoundView.value = value;
+    _shadeRoundView.describe = @"睡眠时长";
+    _shadeRoundView.type = 2;
+    _shadeRoundView.endImageName = @"exercise_dashboard_02.png";
+    [_bigScrollView addSubview:_shadeRoundView];
     
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(taped:)];
+    [_shadeRoundView addGestureRecognizer:tapGestureRecognizer];
 }
 /*
 #pragma mark - Navigation

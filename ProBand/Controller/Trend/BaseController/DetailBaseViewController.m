@@ -48,7 +48,7 @@
 - (void)setControllerWithTitle:(NSString *)title UpDescribeArray:(NSArray *)array1 downDescribeArray:(NSArray *)array2 upValueArray:(NSArray *)valueArray1 downValueArray:(NSArray *)valueArray2 withIndex:(NSInteger)index
 {
     
-    [self setHomeBarTitle:title leftImage:@"return.png" leftAction:@selector(goBack:) rightImage:@"share_invalid.png" rightAction:@selector(share:) bgColor:COLOR(48, 54, 60)];
+    [self setHomeBarTitle:title leftImage:@"return.png" leftAction:@selector(goBack:) rightImage:@"share.png" rightAction:@selector(share:) bgColor:COLOR(48, 54, 60)];
     sleepArray1 = [NSArray arrayWithArray:array1];
     sleepArray2 = [NSArray arrayWithArray:array2];
     sleepTimeArr1 = [NSArray arrayWithArray:valueArray1];
@@ -104,16 +104,13 @@
     {
         headHeight = 430;
     }
-    UIImageView *backImageVIew = [PublicFunction getImageView:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT+20) imageName:@"volume_bg.png"];
     tableView = [[UITableView alloc]initWithFrame:CGRectMake(0, -80, SCREEN_WIDTH, SCREEN_HEIGHT+16-footHeight) style:UITableViewStylePlain];
     tableView.delegate = self;
     tableView.dataSource = self;
     tableView.scrollEnabled = NO;
-    //tableView.bounces = NO;
-    //tableView.backgroundView = backImageVIew;
+    tableView.backgroundColor = COLOR(48, 54, 60);
     tableView.allowsSelection = NO;
-    [tableView addSubview:backImageVIew];
-    [tableView sendSubviewToBack:backImageVIew];
+    
     [tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     [self.view addSubview:tableView];
     
@@ -138,7 +135,7 @@
 //    [headView addSubview:dateLabel];
     
     UIView *footView = [[UIView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT-footHeight-64, SCREEN_WIDTH, footHeight)];
-    footView.backgroundColor = COLOR(7, 26, 48);
+    footView.backgroundColor = COLOR(28, 31, 35);
     NSArray *titleArray = @[NSLocalizedString(@"daily", nil),NSLocalizedString(@"sleep", nil),NSLocalizedString(@"exercise", nil)];
     NSArray *normalBnArray = @[@"home_daily.png",@"home_sleep.png",@"home_exercise.png"];
     NSArray *selectBnArray = @[@"home_daily_sel.png",@"home_sleep_sel.png",@"home_exercise_sel.png"];
@@ -153,14 +150,14 @@
         [tabBn setImage:[UIImage imageNamed:normalBnArray[i]] forState:UIControlStateNormal];
         [tabBn setImage:[UIImage imageNamed:selectBnArray[i]] forState:UIControlStateHighlighted];
         if (i == currectIndex) {
-            [tabBn setTitleColor:COLOR(25, 185, 183) forState:UIControlStateNormal];
+            [tabBn setTitleColor:COLOR(84, 162, 226) forState:UIControlStateNormal];
             [tabBn setImage:[UIImage imageNamed:selectBnArray[i]] forState:UIControlStateNormal];
         }
         else
         {
         [tabBn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         }
-        [tabBn setTitleColor:COLOR(25, 185, 183) forState:UIControlStateHighlighted];
+        [tabBn setTitleColor:COLOR(84, 162, 226) forState:UIControlStateHighlighted];
         [tabBn addTarget:self action:@selector(pushToDetaiController:) forControlEvents:UIControlEventTouchUpInside];
         tabBn.tag = tag;
         [footView addSubview:tabBn];

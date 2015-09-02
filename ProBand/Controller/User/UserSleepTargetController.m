@@ -7,7 +7,8 @@
 //
 
 #import "UserSleepTargetController.h"
-#import "targetInfoManage.h"
+#import "t_goal_sleep.h"
+#import "TargetInfoManager.h"
 #import "UserTrainTargetController.h"
 #import "UIView+Extension.h"
 #import "InitUserInfomationViewController.h"
@@ -15,12 +16,6 @@
 #import "SendCommandToPeripheral.h"
 #import "UIView+Toast.h"
 #define ISSELECT @"isSelect"
-#define STARH @"starH"
-#define STARM @"starM"
-#define ENDH @"endH"
-#define ENDM @"endM"
-#define SLEEPH @"sleepH"
-#define SLEEPINFO @"sleepInfo"
 
 
 @interface UserSleepTargetController ()
@@ -54,7 +49,7 @@
     
     NSUserDefaults *userDefaults;
 }
-@property (nonatomic, strong)UserTargetModel *userTargetObj;
+@property (nonatomic, strong)t_goal_sleep *userTargetObj;
 @end
 
 @implementation UserSleepTargetController
@@ -75,29 +70,9 @@
     [self.rightBtn addTarget:self action:@selector(goToTrainTargetView) forControlEvents:UIControlEventTouchUpInside];
     
     
-    NSDictionary *dict = [userDefaults objectForKey:SLEEPINFO];
-    NSString *startTime = [NSString string];
-    NSString *endTime = [NSString string];
-    if (!dict) {
-        startH = 22;
-        startM = 30;
-        endH = 7;
-        endM = 30;
-        startTime = [NSString stringWithFormat:@"%.2i:%.2i",startH,startM];
-        endTime = [NSString stringWithFormat:@"%.2i:%.2i",endH,endM];
-        
-    }else{
-        startTime = [NSString stringWithFormat:@"%.2i:%.2i",[[dict objectForKey:STARH] intValue],[[dict objectForKey:STARM] intValue]];
-        endTime = [NSString stringWithFormat:@"%.2i:%.2i",[[dict objectForKey:ENDH] intValue],[[dict objectForKey:ENDM] intValue]];
-    }
-    
-    
-    if (_userTargetObj == nil) {
-        _userTargetObj = [UserTargetModel getUserTargetData:[Singleton getUserID]];
-        if (_userTargetObj == nil) {//赋予初始值
-            NSDictionary *dic = @{@"Id":@"",@"userid":[Singleton getUserID],@"stepTarget":@"8000步",@"startTime":startTime,@"endTime":endTime,@"sleepTarget":@"9小时",@"botherStart":@"",@"botherEnd":@"",@"botherStatus":@"",@"clockDaile":@""};
-            _userTargetObj = [UserTargetModel convertDataToModel:dic];
-        }
+    if (_userTargetObj == nil)
+    {
+        _userTargetObj = [TargetInfoManager sleepTargetFromDB];
     }
 
     
@@ -116,20 +91,18 @@
         str = [NSString stringWithFormat:@"%i",i];
     }
     
-    NSMutableDictionary *dict = [[NSMutableDictionary alloc]init];
-    [dict setObject:str forKey:ISSELECT];
-    [dict setObject:[NSString stringWithFormat:@"%i",startH] forKey:STARH];
-    [dict setObject:[NSString stringWithFormat:@"%i",startM] forKey:STARM];
-    [dict setObject:[NSString stringWithFormat:@"%i",endH] forKey:ENDH];
-    [dict setObject:[NSString stringWithFormat:@"%i",endM] forKey:ENDM];
-    [dict setObject:@"9小时" forKey:SLEEPH];
+    //不再保存到plist文件，直接保存到数据库
+    UIButton *startBn = (UIButton *)[self.view viewWithTag:1005];
+    UIButton *finishBn = (UIButton *)[self.view viewWithTag:1006];
+    NSString *beginTime = startBn.titleLabel.text;
+    NSString *endTime = finishBn.titleLabel.text;
+    _userTargetObj.goal_sleep_time = [DateHandle timeStringFromTime:beginTime];
+    _userTargetObj.goal_getup_time = [DateHandle timeStringFromTime:endTime];
     
-    [userDefaults setObject:dict forKey:SLEEPINFO];
-    [userDefaults synchronize];
+    [TargetInfoManager updateSleepTargetWithDictionary:_userTargetObj];
 }
 - (void)goToTrainTargetView
 {
-    
     [self saveSleepInfo];
     
     [[[PersonalGoalsRequest alloc]init]sendSleepGoals:startH StartM:startM EndH:endH EndM:endM automaticSleep:autoS];
@@ -162,8 +135,8 @@
     sleepLab.textAlignment = NSTextAlignmentCenter;
     
     NSString *sleepStr = @"8小时30分钟";
-    if (_userTargetObj.sleepTarget && _userTargetObj.sleepTarget.length > 0) {
-        sleepStr = _userTargetObj.sleepTarget;
+    if (_userTargetObj.goal_sleep_time && _userTargetObj.goal_sleep_time.length > 0) {
+        sleepStr = _userTargetObj.goal_sleep_time;
     }
     UILabel *timeLengthLabel = [PublicFunction getlabel:CGRectMake(0, sleepLab.frame.origin.y + 30, SCREEN_WIDTH, 30) text:@"" textSize:14 textColor:[UIColor colorWithRed:0 green:204/255.0 blue:204/255.0 alpha:1] textBgColor:nil textAlign:@"center"];
     timeLengthLabel.tag = 2001;
@@ -183,8 +156,8 @@
     [bgScrollView.layer addSublayer:lineOne];
     
     
-    
-    UIButton *beginSleepBtn = [PublicFunction getButtonInControl:self frame:CGRectMake(20, endLab.frame.origin.y + 35, 100, 50) title:_userTargetObj.startTime align:@"center" color:[UIColor colorWithRed:0 green:204/255.0 blue:204/255.0 alpha:1] fontsize:35 tag:1005 clickAction:@selector(setSleepTarget:)];
+    NSString *beginTime = [DateHandle timeFromTimeString:_userTargetObj.goal_sleep_time];
+    UIButton *beginSleepBtn = [PublicFunction getButtonInControl:self frame:CGRectMake(20, endLab.frame.origin.y + 35, 100, 50) title:beginTime align:@"center" color:[UIColor colorWithRed:0 green:204/255.0 blue:204/255.0 alpha:1] fontsize:35 tag:1005 clickAction:@selector(setSleepTarget:)];
     [bgScrollView addSubview:beginSleepBtn];
     
     
@@ -201,8 +174,8 @@
     [bgScrollView.layer addSublayer:lineThree];
     
     
-    
-    UIButton *endSleepBtn = [PublicFunction getButtonInControl:self frame:CGRectMake(SCREEN_WIDTH/2 + 30, beginSleepBtn.frame.origin.y , 100, 50) title:_userTargetObj.endTime align:@"center" color:[UIColor colorWithRed:0 green:204/255.0 blue:204/255.0 alpha:1] fontsize:35 tag:1006 clickAction:@selector(setSleepTarget:)];
+    NSString *getupTime = [DateHandle timeFromTimeString:_userTargetObj.goal_getup_time];
+    UIButton *endSleepBtn = [PublicFunction getButtonInControl:self frame:CGRectMake(SCREEN_WIDTH/2 + 30, beginSleepBtn.frame.origin.y , 100, 50) title:getupTime align:@"center" color:[UIColor colorWithRed:0 green:204/255.0 blue:204/255.0 alpha:1] fontsize:35 tag:1006 clickAction:@selector(setSleepTarget:)];
     [bgScrollView addSubview:endSleepBtn];
     
     CALayer *lineFour = [CALayer new];
@@ -298,9 +271,6 @@
     }
     
     
-    //    UIButton *sureBtn = [PublicFunction getButtonInControl:self frame:CGRectMake(SCREEN_WIDTH/2 - 50, SCREEN_HEIGHT - 100, 100, 45) title:@"确定" align:@"center" color:[UIColor blackColor] fontsize:16 tag:1 clickAction:@selector(sureBtnClick:)];
-    //    sureBtn.backgroundColor = [UIColor lightGrayColor];
-    //[self.view addSubview:sureBtn];
     /**
      最下方的选择控件
      */
@@ -323,34 +293,16 @@
     [bgScrollView addSubview:segmented];
     
     
-    
-    NSDictionary *dict = [userDefaults objectForKey:SLEEPINFO];
-    if (!dict) {
-        return;
-    }
-    
-    
     for ( int i = 1000; i <= 1002; i++) {
         UIButton *btn1 = (UIButton *)[self.view viewWithTag:i];
         [btn1 setSelected:NO];
     
     }
     
-    NSString *isSelectBtn = [dict objectForKey:ISSELECT];
-    UIButton *btn = (UIButton *)[self.view viewWithTag:[isSelectBtn integerValue]];
-    [btn setSelected: YES];
-    
-    startH = [[dict objectForKey:STARH] intValue];
-    startM = [[dict objectForKey:STARM] intValue];
-    endH = [[dict objectForKey:ENDH] intValue];
-    endM = [[dict objectForKey:ENDM] intValue];
-    
-    NSString *sleepH = [dict objectForKey:SLEEPH];
-    
     
     //最后将显示时间的label调整:by STar
-    NSString *hourstr = [DateHandle timeStringFromTime:_userTargetObj.startTime];
-    NSString *minstr = [DateHandle timeStringFromTime:_userTargetObj.endTime];
+    NSString *hourstr = _userTargetObj.goal_sleep_time;//[DateHandle timeStringFromTime:_userTargetObj.goal_sleep_time];
+    NSString *minstr = _userTargetObj.goal_getup_time;//[DateHandle timeStringFromTime:_userTargetObj.goal_getup_time];
     NSString *result = [DateHandle sleepDurationFromSleepTime:hourstr getupTime:minstr];
     timeLengthLabel.attributedText = [self getAttributedStr:result withDecollator:@"小"];
 }
@@ -380,20 +332,7 @@
     UIButton *btn2 = (UIButton *)[self.view viewWithTag:1001];
     UIButton *btn3 = (UIButton *)[self.view viewWithTag:1002];
     
-    /**
-     *  保存到数据库中:先判断该语句是否存在，不存在则创建该语句
-     */
-    NSLog(@"当前运动目标为%ld步",(long)self.stepTarget);
-    _userTargetObj.stepTarget = [NSString stringWithFormat:@"%ld",(long)self.stepTarget];
-    BOOL exist = [[DBOperator shared]checkTheDataExistOnDB:@"t_targetInfo" withKey:@"userid" withValue:[Singleton getUserID]];
-    if (exist)
-    {
-        [targetInfoManage updateUserid:_userTargetObj.userid stepTarget:_userTargetObj.stepTarget startTime:_userTargetObj.startTime endTime:_userTargetObj.endTime sleepTarget:_userTargetObj.sleepTarget];
-    }
-    else
-    {
-        [targetInfoManage addUserid:_userTargetObj.userid stepTarget:_userTargetObj.stepTarget startTime:_userTargetObj.startTime endTime:_userTargetObj.endTime sleepTarget:_userTargetObj.sleepTarget];
-    }
+    [TargetInfoManager updateSleepTargetWithDictionary:_userTargetObj];
     
     NSDictionary *dic1 = [[NSUserDefaults standardUserDefaults]objectForKey:@"midnight"];
     if (dic1) {
@@ -412,8 +351,7 @@
     if (btn1.selected) {
         
         [[NSUserDefaults standardUserDefaults]setObject:@{@"begin":beginStr,@"end":endStr,@"state":@"1"} forKey:@"worker"];
-        [[NSUserDefaults standardUserDefaults]synchronize];
-        
+        [[NSUserDefaults standardUserDefaults]synchronize];        
     }
     else if (btn2.selected)
     {
@@ -503,16 +441,6 @@
         label.attributedText = [self getAttributedStr:@"9小时30分钟" withDecollator:@"小"];
     }
     
-    NSMutableDictionary *dict = [[NSMutableDictionary alloc]init];
-    [dict setObject:@"1002" forKey:ISSELECT];
-    [dict setObject:[NSString stringWithFormat:@"%i",startH] forKey:STARH];
-    [dict setObject:[NSString stringWithFormat:@"%i",startM] forKey:STARM];
-    [dict setObject:[NSString stringWithFormat:@"%i",endH] forKey:ENDH];
-    [dict setObject:[NSString stringWithFormat:@"%i",endM] forKey:ENDM];
-    [dict setObject:@"9小时" forKey:SLEEPH];
-    
-    [userDefaults setObject:dict forKey:SLEEPINFO];
-    [userDefaults synchronize];
 }
 #pragma mark - 设置睡眠时间
 
@@ -625,7 +553,7 @@
     if (btn1.selected) {
         if (_selcetTime) {
             [btn1 setTitle:_selcetTime forState:normal];
-            _userTargetObj.startTime = _selcetTime;
+            _userTargetObj.goal_sleep_time = _selcetTime;
         }
         
     }
@@ -633,7 +561,7 @@
     {
         if (_selcetTime) {
             [btn2 setTitle:_selcetTime forState:normal];
-            _userTargetObj.endTime = _selcetTime;
+            _userTargetObj.goal_getup_time = _selcetTime;
         }
         
     }
@@ -661,7 +589,7 @@
     UILabel *promptLabel = (UILabel *)[self.view viewWithTag:2001];
     promptLabel.text = labelText;
     _sleepTime = [NSString stringWithFormat:@"%d小时%d分钟",hour,minute];
-    _userTargetObj.sleepTarget = _sleepTime;
+    _userTargetObj.goal_getup_time = _sleepTime;
 }
 -(void)selectDatePicker:(UIDatePicker *)picker
 {

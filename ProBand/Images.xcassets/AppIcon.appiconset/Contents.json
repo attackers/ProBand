@@ -3,19 +3,12 @@
     {
       "size" : "29x29",
       "idiom" : "iphone",
-      "filename" : "iPhone_Settings_29.png",
-      "scale" : "1x"
-    },
-    {
-      "size" : "29x29",
-      "idiom" : "iphone",
-      "filename" : "iPhone_Settings_58_Retina-1.png",
+      "filename" : "iPhone_Settings_58_Retina.png",
       "scale" : "2x"
     },
     {
-      "size" : "29x29",
       "idiom" : "iphone",
-      "filename" : "iPhone_Spotlight_87.png",
+      "size" : "29x29",
       "scale" : "3x"
     },
     {
@@ -25,33 +18,19 @@
       "scale" : "2x"
     },
     {
-      "size" : "40x40",
       "idiom" : "iphone",
-      "filename" : "Icon-120.png",
+      "size" : "40x40",
       "scale" : "3x"
     },
     {
-      "size" : "57x57",
+      "size" : "60x60",
       "idiom" : "iphone",
-      "filename" : "iPhone_HomeScreen_57.png",
-      "scale" : "1x"
-    },
-    {
-      "size" : "57x57",
-      "idiom" : "iphone",
-      "filename" : "iPhone_Spotlight_114_Retina.png",
+      "filename" : "iPhone_HomeScreen_120_Retina.png",
       "scale" : "2x"
     },
     {
-      "size" : "60x60",
       "idiom" : "iphone",
-      "filename" : "Icon-120-1.png",
-      "scale" : "2x"
-    },
-    {
       "size" : "60x60",
-      "idiom" : "iphone",
-      "filename" : "iPhone_HomeScreen_180_Retina.png",
       "scale" : "3x"
     },
     {
